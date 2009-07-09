@@ -27,6 +27,8 @@ public class FormController {
 	protected String[] allowedFields;
 	protected String[] requiredFields;
 	protected Validator[] validators;
+	protected String formView;
+	protected String successView;
 
 	protected Map<String, Object> referenceData;
 
@@ -44,6 +46,14 @@ public class FormController {
 
 	public void setValidators(Validator[] validators) {
 		this.validators = validators;
+	}
+
+	public void setFormView(String formView) {
+		this.formView = formView;
+	}
+
+	public void setSuccessView(String successView) {
+		this.successView = successView;
 	}
 
 	@ModelAttribute
@@ -92,6 +102,9 @@ public class FormController {
 	}
 
 	protected void validateCommand(Object command, Errors errors) {
+		if(this.validators == null) {
+			return;
+		}
 		for(int i = 0; i < this.validators.length; i++) {
 			if(validators[i].supports(command.getClass())) {
 				validators[i].validate(command, errors);

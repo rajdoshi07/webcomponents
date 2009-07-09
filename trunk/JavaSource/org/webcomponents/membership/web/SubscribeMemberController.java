@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.webcomponents.membership.Member;
 import org.webcomponents.membership.MemberStatus;
 import org.webcomponents.membership.Membership;
 import org.webcomponents.web.servlet.mvc.CaptchaFormController;
@@ -31,16 +30,15 @@ public class SubscribeMemberController extends CaptchaFormController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	@ModelAttribute("member")
-	public Member processSubmit(@ModelAttribute("subscription") SubscribeMemberCommand command, Errors errors, HttpSession session) throws IOException {
+	public String processSubmit(@ModelAttribute("subscription") SubscribeMemberCommand command, Errors errors, HttpSession session) throws IOException {
 		validateCaptcha(command, errors, session);
 		validateCommand(command, errors);
 		if(errors.hasErrors()) {
 			return null;
 		}
 		try {
-			Member member = membership.insertMember(command, command.getPassword());
-			return member;
+			membership.insertMember(command, command.getPassword());
+			return successView;
 		} catch (BindException e) {
 			errors.addAllErrors(e);
 			return null;

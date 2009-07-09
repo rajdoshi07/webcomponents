@@ -48,10 +48,6 @@ public class FormController {
 		this.validators = validators;
 	}
 
-	public void setFormView(String formView) {
-		this.formView = formView;
-	}
-
 	public void setSuccessView(String successView) {
 		this.successView = successView;
 	}

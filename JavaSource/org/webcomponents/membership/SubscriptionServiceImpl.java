@@ -15,14 +15,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	
 	private SubscriptionDao subscriptionDao;
 
-	public Object subscribe(Subscription subscription) throws DuplicateMemberException {
+	public Object subscribe(Subscription subscription) throws DuplicatedUsernameException {
 		String id = subscription.getId();
 		if(id == null) {
 			try {
 				id = subscriptionDao.insertSubscription(subscription);
 			} catch (DataIntegrityViolationException e) {
 				logger.info(e.getMessage());
-				throw new DuplicateMemberException(e);
+				throw new DuplicatedUsernameException(subscription.getUsername());
 			}
 		} else {
 			if(!subscriptionDao.updateSubscription(subscription)) {

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.webcomponents.membership.DuplicateMemberException;
+import org.webcomponents.membership.DuplicatedUsernameException;
 import org.webcomponents.membership.MemberStatus;
 import org.webcomponents.membership.SubscriptionService;
 import org.webcomponents.web.servlet.mvc.CaptchaFormController;
@@ -39,7 +39,7 @@ public class SubscriptionFormController extends CaptchaFormController {
 		}
 		try {
 			subscriptionService.subscribe(subscription);
-		} catch (DuplicateMemberException e) {
+		} catch (DuplicatedUsernameException e) {
 			errors.reject("duplicate");
 		}
 	}

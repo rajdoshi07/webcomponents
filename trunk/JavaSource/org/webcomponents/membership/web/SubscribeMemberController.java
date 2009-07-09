@@ -5,12 +5,15 @@ import java.io.IOException;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.webcomponents.membership.DuplicatedEmailException;
+import org.webcomponents.membership.DuplicatedUsernameException;
+import org.webcomponents.membership.InvalidPasswordException;
+import org.webcomponents.membership.InvalidUsernameException;
 import org.webcomponents.membership.MemberStatus;
 import org.webcomponents.membership.Membership;
 import org.webcomponents.web.servlet.mvc.CaptchaFormController;
@@ -33,16 +36,21 @@ public class SubscribeMemberController extends CaptchaFormController {
 	public String processSubmit(@ModelAttribute("subscription") SubscribeMemberCommand command, Errors errors, HttpSession session) throws IOException {
 		validateCaptcha(command, errors, session);
 		validateCommand(command, errors);
-		if(errors.hasErrors()) {
-			return null;
+		if(!errors.hasErrors()) {
+			try {
+				membership.insertMember(command, command.getPassword());
+				return successView;
+			} catch (InvalidUsernameException e) {
+				errors.rejectValue("screenName", "invalid");
+			} catch (InvalidPasswordException e) {
+				errors.rejectValue("password", "invalid");
+			} catch (DuplicatedUsernameException e) {
+				errors.rejectValue("screenName", "duplicate");
+			} catch (DuplicatedEmailException e) {
+				errors.rejectValue("email", "duplicate");
+			}
 		}
-		try {
-			membership.insertMember(command, command.getPassword());
-			return successView;
-		} catch (BindException e) {
-			errors.addAllErrors(e);
-			return null;
-		}
+		return null;
 	}
 
 	public void setMembership(Membership membership) {

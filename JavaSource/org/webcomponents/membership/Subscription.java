@@ -13,9 +13,9 @@ public class Subscription extends BusinessPerson {
 	
 	private String notes;
 	
-	private boolean useEnabled = false;
+	private boolean termsOfUseAccepted = false;
 
-	private boolean privacyEnabled = false;
+	private boolean privacyPolicyAccepted = false;
 
 	public int getType() {
 		return type;
@@ -25,20 +25,20 @@ public class Subscription extends BusinessPerson {
 		this.type = type;
 	}
 
-	public boolean isUseEnabled() {
-		return useEnabled;
+	public boolean isTermsOfUseAccepted() {
+		return termsOfUseAccepted;
 	}
 
-	public void setUseEnabled(boolean useEnabled) {
-		this.useEnabled = useEnabled;
+	public void setTermsOfUseAccepted(boolean useEnabled) {
+		this.termsOfUseAccepted = useEnabled;
 	}
 
-	public boolean isPrivacyEnabled() {
-		return privacyEnabled;
+	public boolean isPrivacyPolicyAccepted() {
+		return privacyPolicyAccepted;
 	}
 
-	public void setPrivacyEnabled(boolean privacyEnabled) {
-		this.privacyEnabled = privacyEnabled;
+	public void setPrivacyPolicyAccepted(boolean privacyEnabled) {
+		this.privacyPolicyAccepted = privacyEnabled;
 	}
 
 	public String getNotes() {

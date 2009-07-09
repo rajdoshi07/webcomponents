@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface SubscriptionService {
 	
-	public Object subscribe(Subscription subscription) throws DuplicateMemberException;
+	public Object subscribe(Subscription subscription) throws DuplicatedUsernameException;
 	
 	public List<Subscription> list();
 	

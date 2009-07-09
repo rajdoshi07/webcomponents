@@ -11,13 +11,13 @@ import org.springframework.validation.BindException;
 public interface Membership {
 	
 	/**
-	 * TODO: dovrebbe tirare anche una DuplicateMemberException
+	 * TODO: dovrebbe tirare anche una DuplicatedUsernameException
 	 * @param member
 	 * @param password
 	 * @return
 	 * @throws BindException
 	 */
-	public Member insertMember(Member member, String password) throws BindException, IOException;
+	public Member insertMember(Member member, String password) throws DuplicatedUsernameException, DuplicatedEmailException, InvalidUsernameException, InvalidPasswordException, IOException;
 	/**
 	 * 
 	 * @param username could be one of any unique key into member profile
@@ -46,15 +46,16 @@ public interface Membership {
 	 * 
 	 * @param username could be one of any unique key into member profile
 	 * @return
-	 * @throws BindException TODO
+	 * @throws InvalidPasswordException TODO
 	 */
-	public Member editMemberPassword(Object username, String password) throws MemberNotFoundException, BindException, IOException;
+	public Member editMemberPassword(Object username, String password) throws MemberNotFoundException, InvalidPasswordException, IOException;
 	/**
 	 * 
 	 * @param username could be one of any unique key into member profile
 	 * @return
+	 * @throws DuplicatedEmailException TODO
 	 */
-	public Member editMemberEmail(Object username, InternetAddress email) throws MemberNotFoundException, BindException, IOException;
+	public Member editMemberEmail(Object username, InternetAddress email) throws MemberNotFoundException, DuplicatedEmailException, IOException;
 	/**
 	 * 
 	 * @param username could be one of any unique key into member profile

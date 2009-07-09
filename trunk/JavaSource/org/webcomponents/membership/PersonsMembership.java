@@ -1,38 +1,45 @@
 package org.webcomponents.membership;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
 
 import javax.mail.internet.InternetAddress;
 
-import org.apache.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
 
 public class PersonsMembership implements Membership {
 
-	protected Logger logger = Logger.getLogger(PersonsMembership.class);
+	private String passwordRegExp;
+	
+	private String usernameRegExp;
+	
 	private PersonDao personDao;
 	
 	public PersonsMembership(PersonDao personDao) {
 		this.personDao = personDao;
 	}
 	
-	public Member insertMember(Member member, String password) throws BindException {
+	public Member insertMember(Member member, String password) throws InvalidUsernameException, InvalidPasswordException, DuplicatedUsernameException, DuplicatedEmailException, IOException {
+		if(!isValid(member.getUsername(), usernameRegExp)) {
+			throw new InvalidUsernameException(member.getUsername(), usernameRegExp);			
+		}
+		if(!isValid(password, passwordRegExp)) {
+			throw new InvalidPasswordException(password, passwordRegExp);
+		}
 		try {
-			String username = personDao.insertPerson((Person)member, password);
-			return personDao.getPerson(username);
+			String id = personDao.insertPerson((Person)member, password);
+			return personDao.getPerson(id);
 		} catch (DataIntegrityViolationException e) {
-			BindException ex = new BindException(member, "member");
 			Person p = personDao.getPerson(member.getEmail());
 			if(p == null) {
-				ex.rejectValue("screenName", "invalid.duplicate");
+				throw new DuplicatedUsernameException(member.getUsername());
 			} else {
-				ex.rejectValue("email", "invalid.duplicate");
+				throw new DuplicatedEmailException(member.getEmail().getAddress());
 			}
-			throw ex;
 		}
 	}
 
@@ -61,29 +68,26 @@ public class PersonsMembership implements Membership {
 		return personDao.getPerson(username);
 	}
 	
-	public Member editMemberPassword(Object username, String password) throws MemberNotFoundException, BindException {
+	public Member editMemberPassword(Object username, String password) throws MemberNotFoundException, InvalidPasswordException {
+		if(!isValid(password, passwordRegExp)) {
+			throw new InvalidPasswordException(password, passwordRegExp);
+		}
 		if (!personDao.updatePassword(username, password)) {
 			throw new MemberNotFoundException(username);
 		}
 		return personDao.getPerson(username);
 	}
 
-	public Member editMemberEmail(Object username, InternetAddress email) throws MemberNotFoundException, BindException {
+	public Member editMemberEmail(Object username, InternetAddress email) throws MemberNotFoundException, DuplicatedEmailException {
 		try {
 			if (!personDao.updateEmail(username, email)) {
 				Person p = personDao.getPerson(email);
 				if(p == null) {
 					throw new MemberNotFoundException(username);
-				} else {
-					BindException ex = new BindException(email, "email");
-					ex.rejectValue("address", "editEmail.unchanged.error");
-					throw ex;
 				}
 			}
 		} catch (DataIntegrityViolationException e) {
-			BindException ex = new BindException(email, "email");
-			ex.rejectValue("address", "invalid.duplicate.email");
-			throw ex;
+			throw new DuplicatedEmailException(email.getAddress());
 		}
 		
 		Person person = personDao.getPerson(username);		
@@ -115,5 +119,20 @@ public class PersonsMembership implements Membership {
 			return;
 		}
 		personDao.exportPersonsByKey(keys, out);
+	}
+
+	public void setPasswordRegExp(String passwordRegExp) {
+		this.passwordRegExp = passwordRegExp;
+	}
+
+	public void setUsernameRegExp(String usernameRegExp) {
+		this.usernameRegExp = usernameRegExp;
+	}
+	
+	private boolean isValid(String value, String regexp) {
+		if(!(regexp == null || (value != null && value.matches(regexp)))) {
+			return false;
+		}
+		return true;
 	}
 }

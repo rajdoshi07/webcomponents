@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+	<bean id="membership" class="org.webcomponents.membership.PersonsMembership">
+		<constructor-arg>
+			<bean class="org.webcomponents.membership.sqlmap.SqlMapPersonDao">
+				<property name="sqlMapClient" ref="sqlMapClient"/>
+				<property name="namespace" value="membership"/>
+			</bean>
+		</constructor-arg>
+		<property name="passwordRegExp" value="\w{5,32}"/>
+	</bean>
+	<bean id="membershipTemplate" abstract="true" parent="mailTemplate">
+		<property name="sender">
+			<bean class="javax.mail.internet.InternetAddress">
+				<property name="address" value="registrazione@foo.com"/>
+			</bean>
+		</property>
+	</bean>
+	<bean id="validateEmailSender" class="org.webcomponents.mail.TokenEmailSender">
+		<property name="mailer" ref="mailSender"/>
+		<property name="templates">
+			<map>
+				<entry key="main">
+					<bean parent="membershipTemplate">
+						<property name="subjectPart" value="Conferma registrazione" />
+						<property name="plainTextTemplateName" value="membership/activation.ftl"/>
+					</bean>
+				</entry>
+			</map>
+		</property>
+		<property name="key" value="validateMail"/>
+		<property name="tokenService" ref="weeklyTokenService"/>
+	</bean>
+	<aop:config>
+		<aop:pointcut id="insertMember" expression="execution(* org.webcomponents.membership.Membership.insertMember(..)) and args(obj,..)"/>
+		<aop:pointcut id="editEmail" expression="execution(* org.webcomponents.membership.Membership.editMemberEmail(..))"/>
+		<aop:aspect id="notificationAspect" ref="validateEmailSender">
+			<aop:after-returning pointcut-ref="insertMember" method="sendEmail" />
+			<aop:after-returning pointcut-ref="editEmail" method="sendEmail" returning="obj" />
+		</aop:aspect>
+	</aop:config>
+</beans>

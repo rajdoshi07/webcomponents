@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings useStatementNamespaces="true"/>
+	<typeHandler
+		javaType="javax.mail.internet.InternetAddress"
+		callback="org.webcomponents.orm.ibatis.support.InternetAddressTypeHandler"/>
+	<typeHandler
+		javaType="org.webcomponents.membership.InternetAddressStatus"
+		callback="org.webcomponents.membership.sqlmap.InternetAddressStatusTypeHandler"/>	
+	<typeHandler
+		javaType="java.net.URI"
+		callback="org.webcomponents.orm.ibatis.support.UriTypeHandler"/>
+	<typeHandler
+		javaType="java.security.Principal"
+		callback="org.webcomponents.orm.ibatis.support.PrincipalTypeHandler"/>
+	<typeHandler
+		javaType="org.webcomponents.security.providers.josso.JOSSOAuthenticationToken"
+		callback="org.webcomponents.orm.ibatis.support.PrincipalTypeHandler"/>
+	<typeHandler
+		javaType="org.webcomponents.membership.MemberStatus"
+		callback="org.webcomponents.membership.sqlmap.MemberStatusTypeHandler"/>
+	<sqlMap resource="org/webcomponents/membership/sqlmap/Membership.xml"/>
+	<sqlMap resource="org/webcomponents/security/token/sqlmap/Token.xml"/>
+</sqlMapConfig>

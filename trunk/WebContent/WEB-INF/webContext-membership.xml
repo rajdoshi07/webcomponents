@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean name="/membership/subscription.form" class="org.webcomponents.membership.web.SubscribeMemberController" init-method="init">
+		<property name="allowedFields">
+			<list>
+				<value>email</value>
+				<value>password</value>
+				<value>passwordConfirm</value>
+				<value>humanTest</value>
+				<value>privacyPolicyAccepted</value>
+				<value>termsOfUseAccepted</value>
+			</list>
+		</property>
+		<property name="requiredFields">
+			<list>
+				<value>email</value>
+				<value>password</value>
+				<value>humanTest</value>
+				<value>privacyPolicyAccepted</value>
+				<value>termsOfUseAccepted</value>
+			</list>
+		</property>
+		<property name="validators">
+			<list>
+				<bean class="org.webcomponents.validation.PasswordValidator"/>
+				<bean class="org.webcomponents.validation.PrivacyPolicyValidator"/>
+			</list>
+		</property>
+		<property name="captcha" ref="imageCaptchaService"/>
+		<property name="membership" ref="membership"/>
+		<property name="successView" value="redirect:/message.html?msg=subscription.success"/>
+	</bean>
+	<bean name="/membership/validateEmail.html" class="org.webcomponents.membership.web.MemberController">
+		<property name="membership" ref="membership"/>
+		<property name="validationMailSender" ref="validateEmailSender"/>
+	</bean>
+</beans>

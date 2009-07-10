@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Vote">
+	<insert id="vote" parameterClass="java.util.Map">
+		INSERT INTO VOTE (OBJECT_ID, VALUE, VOTED_AT, VOTED_BY)
+		VALUES (#object#, #value#, #votedAt#, #votedBy#)
+	</insert>
+	<select id="getVotes" resultClass="com.iside.competition.Vote">
+		SELECT OBJECT_ID AS object, VALUE AS value, VOTED_AT AS votedAt, VOTED_BY AS votedBy
+		FROM VOTE WHERE VOTED_BY = #votedBy# AND DATE(VOTED_AT) = DATE(#day#) ORDER BY VOTED_AT DESC
+	</select>
+	<select id="getChart">
+	<![CDATA[
+		SELECT OBJECT_ID AS object, SUM(VALUE) AS votes
+		FROM VOTE WHERE VOTED_AT >= #start# AND VOTED_AT < #end# GROUP BY OBJECT_ID ORDER BY votes DESC LIMIT #from#, #to#
+	]]>
+	</select>
+</sqlMap>

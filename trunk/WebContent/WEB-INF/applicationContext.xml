@@ -19,7 +19,7 @@
 		<property name="session" ref="mailSession"/>
 	</bean>
 	<bean id="mailFreemarkerConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
-		<property name="templateLoaderPath" value="classpath:mail"/>
+		<property name="templateLoaderPath" value="/WEB-INF/mail"/>
 	</bean>
 	<bean id="mailTemplate" abstract="true" class="org.webcomponents.mail.FreeMarkerMailTemplate">
 		<property name="configuration" ref="mailFreemarkerConfiguration" />
@@ -30,14 +30,14 @@
 		<property name="resourceRef" value="true"/>
 	</bean>
 	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
-		<property name="configLocation" value="classpath:sql/sql-map-config.xml"/>
+		<property name="configLocation" value="/WEB-INF/sql-map-config.xml"/>
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
-	<bean id="weeklyTokenService" class="org.webcomponents.security.token.TokenServiceImpl">
+	<bean id="weeklyTokenService" class="org.webcomponents.security.token.sqlmap.SqlMapTokenServiceImpl">
 		<property name="sqlMapClient" ref="sqlMapClient"/>
 		<property name="namespace" value="token"/>
 	</bean>
-	<bean id="dailyTokenService" class="org.webcomponents.security.token.TokenServiceImpl">
+	<bean id="dailyTokenService" class="org.webcomponents.security.token.sqlmap.SqlMapTokenServiceImpl">
 		<property name="sqlMapClient" ref="sqlMapClient"/>
 		<property name="defaultSpan" value="86400000"/>
 		<property name="namespace" value="token"/>

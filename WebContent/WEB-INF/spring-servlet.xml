@@ -18,12 +18,14 @@
 			<props>
 				<prop key="TokenExpiredException">membership/validateEmail</prop>
 				<prop key="InvalidTokenException">membership/validateEmail</prop>
+				<prop key="MissingServletRequestParameterException">error</prop>
 			</props>
 		</property>
 	</bean>
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
+				<value>messages</value>
 				<value>org.webcomponents.membership.web.messages</value>
 			</list>
 		</property>

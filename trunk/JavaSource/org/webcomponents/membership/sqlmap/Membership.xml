@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="membership">
+	<typeAlias alias="person" type="org.webcomponents.membership.Person"/>
+	<resultMap id="personResult" class="person">
+		<result property="status" column="STATUS"/>
+		<result property="email" column="EMAIL"/>
+		<result property="emailStatus" column="EMAIL_STATUS"/>
+		<result property="createdAt" column="CREATED_AT"/>
+		<result property="createdBy" column="CREATED_BY"/>
+		<result property="updatedAt" column="UPDATED_AT"/>
+		<result property="updatedBy" column="UPDATED_BY"/>
+	</resultMap>
+	<select id="getPerson" resultMap="personResult" parameterClass="java.lang.String">
+		SELECT *
+		FROM USER
+		WHERE EMAIL = LOWER(#value#)
+	</select>
+	<insert id="insertPerson">
+		INSERT INTO USER (EMAIL, EMAIL_STATUS, PASSWORD, STATUS, PRIVACY_POLICY, TERMS_OF_USE, CREATED_AT, CREATED_BY, UPDATED_BY)
+		VALUES (LOWER(#email#), 0, MD5(#password#), #status#, #privacyPolicyAccepted#, #termsOfUseAccepted#, #createdAt#, <isNull property="createdBy">#email#</isNull><isNotNull property="createdBy">#createdBy#</isNotNull>, <isNull property="createdBy">#email#</isNull><isNotNull property="createdBy">#createdBy#</isNotNull>)
+	</insert>
+	<update id="updateStatus">
+		UPDATE USER SET STATUS = #status# WHERE EMAIL = LOWER(#id#)
+	</update>
+	<update id="updateEmail">
+		UPDATE USER SET EMAIL = LOWER(#email#), EMAIL_STATUS = 0 WHERE EMAIL = LOWER(#email#)
+	</update>
+	<update id="updateEmailStatus">
+		UPDATE USER SET EMAIL_STATUS = #status#, STATUS = 1 WHERE EMAIL = LOWER(#email#) AND STATUS = 0
+	</update>
+	<update id="updatePassword">
+		UPDATE USER SET PASSWORD = MD5(#password#) WHERE EMAIL = LOWER(#id#)
+	</update>
+	<delete id="deletePerson">
+		DELETE FROM USER
+		WHERE EMAIL = LOWER(#value#)
+	</delete>
+	<update id="updatePerson">
+		UPDATE USER SET
+			FIRSTNAME = #firstName#,
+			LASTNAME = #lastName#,
+			BIRTHDATE = #birthdate#,
+			GENDER = #gender#,
+			STREET = #street#,
+			TOWN = #town#,
+			PROVINCE = #province#,
+			COUNTRY = #country#,
+			POSTALCODE = #postalCode#,
+			PHONE = #phone#,
+			FAX = #fax#,
+			MOBILE_ENABLED = ?,
+			EMAIL_ENABLED = ?,
+		WHERE EMAIL = LOWER(#email#)
+	</update>
+</sqlMap>

@@ -26,51 +26,55 @@
 <div id="container">
 	<c:import url="../_header.jsp" />
 	<div id="content">
-		<h1><spring:message code="subscription.label"/></h1>
+		<h1><spring:message code="label.subscription"/></h1>
 		<form:form commandName="subscription">
 			<div class="textField horz">
-				<form:label path="email"><spring:message code="email.label"/></form:label>
+				<form:label path="email"><spring:message code="label.email"/></form:label>
 				<form:input path="email" maxlength="60"/>
 				<form:errors path="email" cssClass="error"/>
 			</div>
 			<div class="textField horz">
-				<form:label path="password"><spring:message code="password.label"/></form:label>
+				<form:label path="password"><spring:message code="label.password"/></form:label>
 				<form:password path="password" maxlength="25"/>
 				<form:errors path="password" cssClass="error"/>
 			</div>
 			<div class="textField horz">
-				<form:label path="passwordConfirm"><spring:message code="passwordConfirm.label"/></form:label>
+				<form:label path="passwordConfirm"><spring:message code="label.passwordConfirm"/></form:label>
 				<form:password path="passwordConfirm" maxlength="25"/>
 				<form:errors path="passwordConfirm" cssClass="error"/>
 			</div>
 <jsp:scriptlet>
 java.util.UUID uuid = java.util.UUID.randomUUID();
-pageContext.setAttribute("captchaSrc", "/captcha/" + uuid.toString() + ".jpg");
+String contextPath = application.getContextPath();
+if(contextPath == null || "/".equals(contextPath)) {
+	contextPath = "";
+}
+pageContext.setAttribute("captchaSrc", contextPath + "/captcha/" + uuid.toString() + ".jpg");
 </jsp:scriptlet>
 			<div id="humanTestField" class="humanTest">		
-				<form:label path="humanTest">Digita i caratteri visualizzati nell'immagine sottostante</form:label>
+				<form:label path="humanTest"><spring:message code="label.captcha"/></form:label>
 				<div><img src="${captchaSrc}" width="182" height="100" alt="captcha"/></div>
 				<form:input path="humanTest" maxlength="64" cssErrorClass="error"/>
 				<form:errors path="humanTest" cssClass="error"/>
 			</div>
 			<fieldset id="privacyPolicyAcceptedField">
-				<legend><spring:message code="privacy.label"/></legend> 
-				<textarea id="privacy" readonly="readonly" rows="5" cols="49"><spring:message code="privacy.text"/></textarea>
-				<form:label path="privacyPolicyAccepted"><form:radiobutton path="privacyPolicyAccepted" value="true"/> <spring:message code="agree.label"/></form:label>
-				<form:label path="privacyPolicyAccepted"><form:radiobutton path="privacyPolicyAccepted" value="false"/> <spring:message code="disagree.label"/></form:label>
+				<legend><spring:message code="label.privacy"/></legend> 
+				<textarea id="privacy" readonly="readonly" rows="5" cols="49"><spring:message code="text.privacy"/></textarea>
+				<form:label path="privacyPolicyAccepted"><form:radiobutton path="privacyPolicyAccepted" value="true"/> <spring:message code="label.agree"/></form:label>
+				<form:label path="privacyPolicyAccepted"><form:radiobutton path="privacyPolicyAccepted" value="false"/> <spring:message code="label.disagree"/></form:label>
 				<form:errors path="privacyPolicyAccepted" cssClass="error"/>
 			</fieldset>
 			<fieldset id="termsOfUseAcceptedField">
-				<legend><spring:message code="use.label"/></legend>
-				<textarea id="use" readonly="readonly" rows="5" cols="49"><spring:message code="use.text"/></textarea>
-				<form:label path="termsOfUseAccepted"><form:radiobutton path="termsOfUseAccepted" value="true"/> <spring:message code="agree.label"/></form:label>
-				<form:label path="termsOfUseAccepted"><form:radiobutton path="termsOfUseAccepted" value="false"/> <spring:message code="disagree.label"/></form:label>
+				<legend><spring:message code="label.use"/></legend>
+				<textarea id="use" readonly="readonly" rows="5" cols="49"><spring:message code="text.use"/></textarea>
+				<form:label path="termsOfUseAccepted"><form:radiobutton path="termsOfUseAccepted" value="true"/> <spring:message code="label.agree"/></form:label>
+				<form:label path="termsOfUseAccepted"><form:radiobutton path="termsOfUseAccepted" value="false"/> <spring:message code="label.disagree"/></form:label>
 				<form:errors path="termsOfUseAccepted" cssClass="error"/>
 			</fieldset>
 			<ul class="collection buttons">
-				<li><button type="submit"><spring:message code="submit.label"/></button></li>
+				<li><button type="submit"><spring:message code="label.submit"/></button></li>
 			</ul>
-			<span class="important">* <spring:message code="required.label"/></span>
+			<span class="important">* <spring:message code="label.required"/></span>
 		</form:form>
 	</div>
 	<c:import url="../_footer.jsp" />

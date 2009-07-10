@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+	<ResourceLink global="mail/Session" name="mail/Session" type="javax.mail.Session" />
+	<Resource name="jdbc/webcomponents" auth="Container" type="javax.sql.DataSource"
+               maxActive="100" maxIdle="30" maxWait="10000"
+               username="webcomponents" password="webcomponents" driverClassName="com.mysql.jdbc.Driver"
+               url="jdbc:mysql://localhost/webcomponents?autoReconnect=true"
+               removeAbandoned="true" removeAbandonedTimeout="60" logAbandoned="true"/>
+</Context>

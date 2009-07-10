@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="token">
+	<resultMap id="token" class="org.webcomponents.security.token.Token">
+		<result property="id" column="ID"/>
+		<result property="insertedAt" column="INSERTED_AT"/>
+		<result property="key" column="KEY"/>
+		<result property="value" column="VALUE"/>
+		<result property="expireAt" column="EXPIRE_AT"/>
+	</resultMap>
+	<select id="getToken" resultMap="token">
+		SELECT *
+		FROM TOKEN
+		WHERE ID = #value#
+	</select>
+	<insert id="insertToken">
+		INSERT INTO TOKEN (`ID`, `INSERTED_AT`, `KEY`, `VALUE`, `EXPIRE_AT`)
+		VALUES (#id#,#insertedAt#,#key#,#value#,#expireAt#)
+	</insert>
+</sqlMap>

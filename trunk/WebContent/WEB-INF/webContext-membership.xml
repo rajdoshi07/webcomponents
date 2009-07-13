@@ -24,7 +24,7 @@
 		</property>
 		<property name="validators">
 			<list>
-				<bean class="org.webcomponents.validation.PasswordValidator"/>
+				<ref bean="passwordValidator"/>
 				<bean class="org.webcomponents.validation.PrivacyPolicyValidator"/>
 			</list>
 		</property>
@@ -32,8 +32,34 @@
 		<property name="membership" ref="membership"/>
 		<property name="successView" value="redirect:/message.html?msg=subscription.success"/>
 	</bean>
+	<bean name="/editPassword.form" class="org.webcomponents.membership.web.EditPasswordController" init-method="init">
+		<property name="requiredFields">
+			<list>
+				<value>passwordCheck</value>
+				<value>password</value>
+				<value>passwordConfirm</value>
+			</list>
+		</property>
+		<property name="validators">
+			<list>
+				<bean class="org.webcomponents.security.validation.PasswordCheckValidator">
+					<property name="authenticationProvider">
+						<bean class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
+							<property name="passwordEncoder">
+								<bean class="org.springframework.security.providers.encoding.Md5PasswordEncoder"/>
+							</property>
+							<property name="userDetailsService" ref="userDetailsService"/>
+						</bean>
+					</property>
+				</bean>
+				<ref bean="passwordValidator"/>
+			</list>
+		</property>
+		<property name="membership" ref="membership"/>
+	</bean>
 	<bean name="/membership/validateEmail.html" class="org.webcomponents.membership.web.MemberController">
 		<property name="membership" ref="membership"/>
 		<property name="validationMailSender" ref="validateEmailSender"/>
 	</bean>
+	<bean id="passwordValidator" class="org.webcomponents.validation.PasswordValidator"/>
 </beans>

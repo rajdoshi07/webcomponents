@@ -27,7 +27,6 @@ public class FormController {
 	protected String[] allowedFields;
 	protected String[] requiredFields;
 	protected Validator[] validators;
-	protected String formView;
 	protected String successView;
 
 	protected Map<String, Object> referenceData;

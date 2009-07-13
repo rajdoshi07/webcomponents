@@ -2,16 +2,20 @@ package org.webcomponents.membership;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 
 import javax.mail.internet.InternetAddress;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
+import org.webcomponents.security.vote.ContentRelatedRoleService;
 
-public class PersonsMembership implements Membership {
+@Service
+public class PersonsMembership implements Membership, ContentRelatedRoleService {
 
 	private String passwordRegExp;
 	
@@ -134,5 +138,15 @@ public class PersonsMembership implements Membership {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public boolean isContentEditor(Object id, Principal principal) {
+		return false;
+	}
+
+	@Override
+	public boolean isContentOwner(Object id, Principal principal) {
+		return principal.getName().equalsIgnoreCase(id.toString());
 	}
 }

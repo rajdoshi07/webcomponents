@@ -10,6 +10,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
@@ -37,7 +38,7 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 		}
 		try {
 			Principal principal = SecurityContextHolder.getContext().getAuthentication();
-			if(principal == null) {
+			if(principal == null || principal instanceof AnonymousAuthenticationToken) {
 				principal = member;
 			}
 			String id = personDao.insertPerson((Person)member, password, principal);

@@ -9,6 +9,7 @@ import java.util.List;
 import javax.mail.internet.InternetAddress;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
@@ -35,7 +36,11 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 			throw new InvalidPasswordException(password, passwordRegExp);
 		}
 		try {
-			String id = personDao.insertPerson((Person)member, password);
+			Principal principal = SecurityContextHolder.getContext().getAuthentication();
+			if(principal == null) {
+				principal = member;
+			}
+			String id = personDao.insertPerson((Person)member, password, principal);
 			return personDao.getPerson(id);
 		} catch (DataIntegrityViolationException e) {
 			Person p = personDao.getPerson(member.getEmail());
@@ -52,21 +57,24 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 	}
 
 	public Member removeMember(Object username) throws MemberNotFoundException {
-		if (!personDao.updateStatus(username, MemberStatus.DELETE_ALL_MARK)) {
+		Principal principal = SecurityContextHolder.getContext().getAuthentication();
+		if (!personDao.updateStatus(username, MemberStatus.DELETE_ALL_MARK, principal)) {
 			throw new MemberNotFoundException(username);
 		}
 		return personDao.getPerson(username);
 	}
 
 	public Member enableMember(Object username) throws MemberNotFoundException {
-		if (!personDao.updateStatus(username, MemberStatus.ACTIVE)) {
+		Principal principal = SecurityContextHolder.getContext().getAuthentication();
+		if (!personDao.updateStatus(username, MemberStatus.ACTIVE, principal)) {
 			throw new MemberNotFoundException(username);
 		}
 		return personDao.getPerson(username);
 	}
 
 	public Member disableMember(Object username) throws MemberNotFoundException {
-		if (!personDao.updateStatus(username, MemberStatus.INACTIVE)) {
+		Principal principal = SecurityContextHolder.getContext().getAuthentication();
+		if (!personDao.updateStatus(username, MemberStatus.INACTIVE, principal)) {
 			throw new MemberNotFoundException(username);
 		}
 		return personDao.getPerson(username);
@@ -76,7 +84,8 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 		if(!isValid(password, passwordRegExp)) {
 			throw new InvalidPasswordException(password, passwordRegExp);
 		}
-		if (!personDao.updatePassword(username, password)) {
+		Principal principal = SecurityContextHolder.getContext().getAuthentication();
+		if (!personDao.updatePassword(username, password, principal)) {
 			throw new MemberNotFoundException(username);
 		}
 		return personDao.getPerson(username);
@@ -84,7 +93,8 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 
 	public Member editMemberEmail(Object username, InternetAddress email) throws MemberNotFoundException, DuplicatedEmailException {
 		try {
-			if (!personDao.updateEmail(username, email)) {
+			Principal principal = SecurityContextHolder.getContext().getAuthentication();
+			if (!personDao.updateEmail(username, email, principal)) {
 				Person p = personDao.getPerson(email);
 				if(p == null) {
 					throw new MemberNotFoundException(username);
@@ -99,14 +109,16 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 	}
 
 	public Member editMemberDetails(Object username, Member member) throws MemberNotFoundException, BindException {
-		if (!personDao.updatePerson(username, (Person)member)) {
+		Principal principal = SecurityContextHolder.getContext().getAuthentication();
+		if (!personDao.updatePerson(username, (Person)member, principal)) {
 			throw new MemberNotFoundException(username);
 		}
 		return personDao.getPerson(username);
 	}
 
-	public void validateAddress(InternetAddress email) throws MemberNotFoundException {
-		if(!personDao.updateAddressStatus(email, InternetAddressStatus.VALID)) {
+	public void validateEmail(InternetAddress email) throws MemberNotFoundException {
+		Principal principal = SecurityContextHolder.getContext().getAuthentication();
+		if(!personDao.updateEmailStatus(email, InternetAddressStatus.VALID, principal)) {
 			throw new MemberNotFoundException(email);
 		}
 	}
@@ -147,6 +159,18 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 
 	@Override
 	public boolean isContentOwner(Object id, Principal principal) {
-		return principal.getName().equalsIgnoreCase(id.toString());
+		String username = principal.getName();
+		if(id instanceof InternetAddress) {
+			if(username.indexOf('@') < 0) {
+				Member member = getMember(username);
+				InternetAddress email = member.getEmail();
+				if(email == null) {
+					return false;
+				}
+				String address = ((InternetAddress) id).getAddress();
+				return email.getAddress().equalsIgnoreCase(address);
+			}
+		}
+		return username.equalsIgnoreCase(id.toString());
 	}
 }

@@ -34,7 +34,8 @@ public interface Membership {
 	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
 	public Member editMemberDetails(Object username, Member member) throws MemberNotFoundException, BindException, IOException;	
 
-	public void validateAddress(InternetAddress email) throws MemberNotFoundException;
+	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
+	public void validateEmail(InternetAddress email) throws MemberNotFoundException;
 	
 	@Secured("ROLE_ADMIN")
 	public List<? extends Member> findMembersByKey(List<Object> keys);

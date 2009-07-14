@@ -2,6 +2,7 @@ package org.webcomponents.membership.web;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -44,6 +45,7 @@ public class EditPasswordController extends FormController {
 		return null;
 	}
 
+	@Required
 	public void setMembership(Membership membership) {
 		this.membership = membership;
 	}

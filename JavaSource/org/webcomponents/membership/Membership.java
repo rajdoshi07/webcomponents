@@ -34,7 +34,11 @@ public interface Membership {
 	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
 	public Member editMemberDetails(Object username, Member member) throws MemberNotFoundException, BindException, IOException;	
 
-	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
+	/**
+	 * TODO: authentication via Token
+	 * @param email
+	 * @throws MemberNotFoundException
+	 */
 	public void validateEmail(InternetAddress email) throws MemberNotFoundException;
 	
 	@Secured("ROLE_ADMIN")

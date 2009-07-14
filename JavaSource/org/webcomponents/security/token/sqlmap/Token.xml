@@ -2,19 +2,19 @@
 <!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
 <sqlMap namespace="token">
 	<resultMap id="token" class="org.webcomponents.security.token.Token">
-		<result property="id" column="ID"/>
-		<result property="insertedAt" column="INSERTED_AT"/>
-		<result property="key" column="KEY"/>
-		<result property="value" column="VALUE"/>
-		<result property="expireAt" column="EXPIRE_AT"/>
+		<result property="id" column="id"/>
+		<result property="insertedAt" column="inserted_at"/>
+		<result property="key" column="key"/>
+		<result property="value" column="value"/>
+		<result property="expireAt" column="expire_at"/>
 	</resultMap>
 	<select id="getToken" resultMap="token">
-		SELECT *
-		FROM TOKEN
-		WHERE ID = #value#
+		select *
+		from tokens
+		where id = #value#
 	</select>
 	<insert id="insertToken">
-		INSERT INTO TOKEN (`ID`, `INSERTED_AT`, `KEY`, `VALUE`, `EXPIRE_AT`)
+		insert into tokens (`id`, `inserted_at`, `key`, `value`, `expire_at`)
 		VALUES (#id#,#insertedAt#,#key#,#value#,#expireAt#)
 	</insert>
 </sqlMap>

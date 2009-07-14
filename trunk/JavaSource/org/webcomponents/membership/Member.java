@@ -74,6 +74,11 @@ public class Member extends PersistentObject implements Principal, MailReceiver,
 	}
 
 	public String getUsername() {
+		if(getScreenName() == null) {
+			if(getEmail() != null) {
+				return getEmail().getAddress();
+			}
+		}
 		return getScreenName();
 	}
 

@@ -33,7 +33,7 @@
 		update users set password = md5(#password#), updated_by = #updatedBy# where username = lower(#username#)
 	</update>
 	<delete id="deletePerson">
-		DELETE from users
+		delete from users
 		where username = lower(#value#)
 	</delete>
 	<update id="updatePerson">
@@ -54,4 +54,9 @@
 			updated_by = #updatedBy#
 		where username = lower(#email#)
 	</update>
+	<select id="findByKey" parameterClass="java.util.List" resultMap="personResult">
+		SELECT *
+		FROM users
+		WHERE <iterate prepend="EMAIL IN" open="(" close=")" conjunction=",">LOWER(#[]#)</iterate>
+	</select>
 </sqlMap>

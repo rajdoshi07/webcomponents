@@ -1,6 +1,7 @@
 package org.webcomponents.membership.sqlmap;
 
 import java.io.Writer;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +33,17 @@ public class SqlMapPersonDao extends SqlMapClientDaoSupport implements PersonDao
 
 	private String exportRowHandlerId;
 
-	public String insertPerson(Person person, String password) {
-		getSqlMapClientTemplate().insert(applyNamespace("insertPerson"), person);
-		return person.getUsername();
+	public String insertPerson(Person person, String password, Principal principal) {
+		Map<String, Object> model = new HashMap<String, Object>(3);
+		try {
+			model.put("person", person);
+			model.put("password", password);
+			model.put("updatedBy", principal);
+			getSqlMapClientTemplate().insert(applyNamespace("insertPerson"), model);
+			return person.getUsername();
+		} finally {
+			model.clear();
+		}
 	}
 
 	public Person getPerson(Object username) {
@@ -42,29 +51,52 @@ public class SqlMapPersonDao extends SqlMapClientDaoSupport implements PersonDao
 		return (Person) getSqlMapClientTemplate().queryForObject(applyNamespace("getPerson"), s);
 	}
 
-	public boolean updatePerson(Object username, Person person) {
-		return getSqlMapClientTemplate().update(applyNamespace("updatePerson"), person) == 1;
+	public boolean updatePerson(Object username, Person person, Principal principal) {
+		Map<String, Object> model = new HashMap<String, Object>(3);
+		try {
+			model.put("username", getUsernameAsString(username));
+			model.put("person", person);
+			model.put("updatedBy", principal);
+			return getSqlMapClientTemplate().update(applyNamespace("updatePerson"), model) == 1;
+		} finally {
+			model.clear();
+		}
 	}
 
-	public boolean updateEmail(Object username, InternetAddress email) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("id", getUsernameAsString(username));
-		map.put("email", email);
-		return getSqlMapClientTemplate().update(applyNamespace("updateEmail"), map) == 1;
+	public boolean updateEmail(Object username, InternetAddress email, Principal principal) {
+		Map<String, Object> model = new HashMap<String, Object>(3);
+		try {
+			model.put("username", getUsernameAsString(username));
+			model.put("email", email);
+			model.put("updatedBy", principal);
+			return getSqlMapClientTemplate().update(applyNamespace("updateEmail"), model) == 1;
+		} finally {
+			model.clear();
+		}
 	}
 
-	public boolean updatePassword(Object username, String password) {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("id", getUsernameAsString(username));
-		map.put("password", password);
-		return getSqlMapClientTemplate().update(applyNamespace("updatePassword"), map) == 1;
+	public boolean updatePassword(Object username, String password, Principal principal) {
+		Map<String, Object> model = new HashMap<String, Object>(3);
+		try {
+			model.put("username", getUsernameAsString(username));
+			model.put("password", password);
+			model.put("updatedBy", principal);
+			return getSqlMapClientTemplate().update(applyNamespace("updatePassword"), model) == 1;
+		} finally {
+			model.clear();
+		}
 	}
 
-	public boolean updateStatus(Object username, MemberStatus status) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("id", getUsernameAsString(username));
-		map.put("status", status);
-		return getSqlMapClientTemplate().update(applyNamespace("updateStatus"), map) == 1;
+	public boolean updateStatus(Object username, MemberStatus status, Principal principal) {
+		Map<String, Object> model = new HashMap<String, Object>(3);
+		try {
+			model.put("username", getUsernameAsString(username));
+			model.put("status", status);
+			model.put("updatedBy", principal);
+			return getSqlMapClientTemplate().update(applyNamespace("updateStatus"), model) == 1;
+		} finally {
+			model.clear();
+		}
 	}
 
 	/**
@@ -86,11 +118,16 @@ public class SqlMapPersonDao extends SqlMapClientDaoSupport implements PersonDao
 		return getSqlMapClientTemplate().delete(applyNamespace("deletePerson"), s) == 1;
 	}
 
-	public boolean updateAddressStatus(InternetAddress address, InternetAddressStatus status) {
-		Map<String, Object> model = new HashMap<String, Object>(2);
-		model.put("status", status);
-		model.put("email", address);
-		return getSqlMapClientTemplate().update(applyNamespace("updateEmailStatus"), model) == 1;
+	public boolean updateEmailStatus(InternetAddress address, InternetAddressStatus status, Principal principal) {
+		Map<String, Object> model = new HashMap<String, Object>(3);
+		try {
+			model.put("status", status);
+			model.put("email", address);
+			model.put("updatedBy", principal);
+			return getSqlMapClientTemplate().update(applyNamespace("updateEmailStatus"), model) == 1;
+		} finally {
+			model.clear();
+		}
 	}
 
 	@SuppressWarnings("unchecked")

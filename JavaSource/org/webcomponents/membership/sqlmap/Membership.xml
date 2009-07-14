@@ -3,54 +3,55 @@
 <sqlMap namespace="membership">
 	<typeAlias alias="person" type="org.webcomponents.membership.Person"/>
 	<resultMap id="personResult" class="person">
-		<result property="status" column="STATUS"/>
-		<result property="email" column="EMAIL"/>
-		<result property="emailStatus" column="EMAIL_STATUS"/>
-		<result property="createdAt" column="CREATED_AT"/>
-		<result property="createdBy" column="CREATED_BY"/>
-		<result property="updatedAt" column="UPDATED_AT"/>
-		<result property="updatedBy" column="UPDATED_BY"/>
+		<result property="status" column="status"/>
+		<result property="email" column="username"/>
+		<result property="emailStatus" column="email_status"/>
+		<result property="createdAt" column="created_at"/>
+		<result property="createdBy" column="created_by"/>
+		<result property="updatedAt" column="updated_at"/>
+		<result property="updatedBy" column="updated_by"/>
 	</resultMap>
-	<select id="getPerson" resultMap="personResult" parameterClass="java.lang.String">
-		SELECT *
-		FROM USER
-		WHERE EMAIL = LOWER(#value#)
+	<select id="getPerson" resultMap="personResult">
+		select *
+		from users
+		where username = lower(#value#)
 	</select>
 	<insert id="insertPerson">
-		INSERT INTO USER (EMAIL, EMAIL_STATUS, PASSWORD, STATUS, PRIVACY_POLICY, TERMS_OF_USE, CREATED_AT, CREATED_BY, UPDATED_BY)
-		VALUES (LOWER(#email#), 0, MD5(#password#), #status#, #privacyPolicyAccepted#, #termsOfUseAccepted#, #createdAt#, <isNull property="createdBy">#email#</isNull><isNotNull property="createdBy">#createdBy#</isNotNull>, <isNull property="createdBy">#email#</isNull><isNotNull property="createdBy">#createdBy#</isNotNull>)
+		insert into users (username, email_status, password, status, privacy_policy, terms_of_use, created_at, created_by, updated_by)
+		values (lower(#person.email#), 0, md5(#password#), #person.status#, #person.privacyPolicyAccepted#, #person.termsOfUseAccepted#, #person.createdAt#, #updatedBy#, #updatedBy#)
 	</insert>
 	<update id="updateStatus">
-		UPDATE USER SET STATUS = #status# WHERE EMAIL = LOWER(#id#)
+		update users set status = #status#, updated_by = #updatedBy# where username = lower(#username#)
 	</update>
 	<update id="updateEmail">
-		UPDATE USER SET EMAIL = LOWER(#email#), EMAIL_STATUS = 0 WHERE EMAIL = LOWER(#email#)
+		update users set username = lower(#email#), email_status = 0, updated_by = #updatedBy# where username = lower(#username#)
 	</update>
 	<update id="updateEmailStatus">
-		UPDATE USER SET EMAIL_STATUS = #status#, STATUS = 1 WHERE EMAIL = LOWER(#email#) AND STATUS = 0
+		update users set email_status = #status#, status = 1, updated_by = #updatedBy# where username = lower(#email#) AND status = 0
 	</update>
 	<update id="updatePassword">
-		UPDATE USER SET PASSWORD = MD5(#password#) WHERE EMAIL = LOWER(#id#)
+		update users set password = md5(#password#), updated_by = #updatedBy# where username = lower(#username#)
 	</update>
 	<delete id="deletePerson">
-		DELETE FROM USER
-		WHERE EMAIL = LOWER(#value#)
+		DELETE from users
+		where username = lower(#value#)
 	</delete>
 	<update id="updatePerson">
-		UPDATE USER SET
-			FIRSTNAME = #firstName#,
-			LASTNAME = #lastName#,
-			BIRTHDATE = #birthdate#,
-			GENDER = #gender#,
-			STREET = #street#,
-			TOWN = #town#,
-			PROVINCE = #province#,
-			COUNTRY = #country#,
-			POSTALCODE = #postalCode#,
-			PHONE = #phone#,
-			FAX = #fax#,
-			MOBILE_ENABLED = ?,
-			EMAIL_ENABLED = ?,
-		WHERE EMAIL = LOWER(#email#)
+		update users set
+			FIRSTNAME = #person.firstName#,
+			LASTNAME = #person.lastName#,
+			BIRTHDATE = #person.birthdate#,
+			GENDER = #person.gender#,
+			STREET = #person.street#,
+			TOWN = #person.town#,
+			PROVINCE = #person.province#,
+			COUNTRY = #person.country#,
+			POSTALCODE = #person.postalCode#,
+			PHONE = #person.phone#,
+			FAX = #person.fax#,
+			MOBILE_ENABLED = #person.mobileEnabled#,
+			EMAIL_ENABLED = #person.emailEnabled#,
+			updated_by = #updatedBy#
+		where username = lower(#email#)
 	</update>
 </sqlMap>

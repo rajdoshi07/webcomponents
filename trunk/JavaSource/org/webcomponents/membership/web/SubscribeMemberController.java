@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.security.userdetails.jdbc.JdbcUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,6 +26,10 @@ public class SubscribeMemberController extends CaptchaFormController {
 	
 	private Membership membership;
 	
+	private JdbcUserDetailsManager detailsManager;
+	
+	private String defaultGroup;
+	
 	@RequestMapping(method = RequestMethod.GET)
 	@ModelAttribute("subscription")
 	public SubscribeMemberCommand setupForm() {
@@ -39,6 +45,9 @@ public class SubscribeMemberController extends CaptchaFormController {
 		if(!errors.hasErrors()) {
 			try {
 				membership.insertMember(command, command.getPassword());
+				if(detailsManager != null) {
+					detailsManager.addUserToGroup(command.getUsername(), defaultGroup);
+				}
 				return successView;
 			} catch (InvalidUsernameException e) {
 				errors.rejectValue("screenName", "invalid");
@@ -53,8 +62,17 @@ public class SubscribeMemberController extends CaptchaFormController {
 		return null;
 	}
 
+	@Required
 	public void setMembership(Membership membership) {
 		this.membership = membership;
+	}
+
+	public void setDetailsManager(JdbcUserDetailsManager detailsManager) {
+		this.detailsManager = detailsManager;
+	}
+
+	public void setDefaultGroup(String defaultGroup) {
+		this.defaultGroup = defaultGroup;
 	}
 	
 }

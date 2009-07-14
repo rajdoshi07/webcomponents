@@ -85,7 +85,7 @@ public class MemberController {
 				retry(email);
 				throw new TokenExpiredException(t);
 			} else {
-				membership.validateAddress(mail);
+				membership.validateEmail(mail);
 			}
 		} catch (MemberNotFoundException e) {
 			throw new InvalidTokenException(t, e);

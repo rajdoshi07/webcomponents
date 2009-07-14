@@ -15,7 +15,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
-public class FreeMarkerMailTemplate extends MailContentTemplate implements InitializingBean {
+public class FreeMarkerMailTemplate extends MailContentTemplate {
 	
 	private Configuration configuration;
 
@@ -65,7 +65,7 @@ public class FreeMarkerMailTemplate extends MailContentTemplate implements Initi
 		this.htmlTextTemplateName = htmlTextTemplate;
 	}
 
-	public void afterPropertiesSet() throws Exception {
+	public void init() throws Exception {
 		if(subjectTemplateName != null) {
 			subjectTemplate = configuration.getTemplate(subjectTemplateName, locale);
 		}

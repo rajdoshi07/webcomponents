@@ -55,8 +55,8 @@
 		where username = lower(#email#)
 	</update>
 	<select id="findByKey" parameterClass="java.util.List" resultMap="personResult">
-		SELECT *
-		FROM users
-		WHERE <iterate prepend="EMAIL IN" open="(" close=")" conjunction=",">LOWER(#[]#)</iterate>
+		select *
+		from users
+		where <iterate prepend="username IN" open="(" close=")" conjunction=",">LOWER(#[]#)</iterate>
 	</select>
 </sqlMap>

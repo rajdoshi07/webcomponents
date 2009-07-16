@@ -3,10 +3,10 @@ package org.webcomponents.mail;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -15,7 +15,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
-public class FreeMarkerMailTemplate extends MailContentTemplate {
+public class FreeMarkerMailTemplate extends MailContentTemplate implements InitializingBean {
 	
 	private Configuration configuration;
 
@@ -65,7 +65,6 @@ public class FreeMarkerMailTemplate extends MailContentTemplate {
 		this.htmlTextTemplateName = htmlTextTemplate;
 	}
 
-	@PostConstruct
 	public void afterPropertiesSet() throws Exception {
 		if(subjectTemplateName != null) {
 			subjectTemplate = configuration.getTemplate(subjectTemplateName, locale);

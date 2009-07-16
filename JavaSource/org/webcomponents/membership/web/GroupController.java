@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.util.NestedServletException;
 import org.webcomponents.membership.DuplicatedGroupException;
 
 @Controller
@@ -50,10 +49,8 @@ public class GroupController {
 	public void createGroup(@RequestParam("name")String name) throws DuplicatedGroupException {
 		try {
 			groupManager.createGroup(name, defaultAuthorities);
-		} catch(RuntimeException e) {
-			if(e.getCause() instanceof DataIntegrityViolationException) {
-				throw new DuplicatedGroupException(name);
-			}
+		} catch(DataIntegrityViolationException e) {
+			throw new DuplicatedGroupException(name);
 		}
 	}
 

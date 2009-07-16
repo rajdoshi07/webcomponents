@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.mail.internet.InternetAddress;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -74,7 +75,8 @@ public class FormController {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void init() throws Exception {
+	@PostConstruct
+	public void afterPropertiesSet() throws Exception {
 		if(this.validators == null) {
 			return;
 		}

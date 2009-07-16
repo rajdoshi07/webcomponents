@@ -3,6 +3,7 @@ package org.webcomponents.mail;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -64,7 +65,8 @@ public class FreeMarkerMailTemplate extends MailContentTemplate {
 		this.htmlTextTemplateName = htmlTextTemplate;
 	}
 
-	public void init() throws Exception {
+	@PostConstruct
+	public void afterPropertiesSet() throws Exception {
 		if(subjectTemplateName != null) {
 			subjectTemplate = configuration.getTemplate(subjectTemplateName, locale);
 		}

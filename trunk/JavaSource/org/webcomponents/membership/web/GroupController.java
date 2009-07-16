@@ -5,18 +5,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.userdetails.GroupManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.NestedServletException;
+import org.webcomponents.membership.DuplicatedGroupException;
 
 @Controller
 public class GroupController {
 	
 	private GroupManager groupManager;
+	
+	private GrantedAuthority[] defaultAuthorities = new GrantedAuthorityImpl[] {
+		new GrantedAuthorityImpl("user")
+	};
 	
 	@RequestMapping(value="groups", method=RequestMethod.GET)
 	@ModelAttribute("groups")
@@ -37,9 +45,24 @@ public class GroupController {
 		}
 		return model;
 	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public void createGroup(@RequestParam("name")String name) throws DuplicatedGroupException {
+		try {
+			groupManager.createGroup(name, defaultAuthorities);
+		} catch(RuntimeException e) {
+			if(e.getCause() instanceof DataIntegrityViolationException) {
+				throw new DuplicatedGroupException(name);
+			}
+		}
+	}
 
 	public void setGroupManager(GroupManager groupManager) {
 		this.groupManager = groupManager;
+	}
+
+	public void setDefaultAuthorities(GrantedAuthority[] defaultAuthorities) {
+		this.defaultAuthorities = defaultAuthorities;
 	}
 
 }

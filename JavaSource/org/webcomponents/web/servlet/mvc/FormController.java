@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.mail.internet.InternetAddress;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.mail.javamail.InternetAddressEditor;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller
-public class FormController {
+public class FormController implements InitializingBean {
 
 	protected String[] allowedFields;
 	protected String[] requiredFields;
@@ -75,7 +75,6 @@ public class FormController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@PostConstruct
 	public void afterPropertiesSet() throws Exception {
 		if(this.validators == null) {
 			return;

@@ -40,11 +40,11 @@ public class ContentRelatedRoleVoter implements AccessDecisionVoter {
 					Object id = methodInvocation.getArguments()[0];
 					if("OWNER".equalsIgnoreCase(role)) {
 						if(service.isContentOwner(id, authentication)) {
-							rv = ACCESS_GRANTED;
+							return ACCESS_GRANTED;
 						}
 					} else if("EDITOR".equalsIgnoreCase(role)) {
 						if(service.isContentEditor(id, authentication)) {
-							rv = ACCESS_GRANTED;
+							return ACCESS_GRANTED;
 						}
 					}
 				}

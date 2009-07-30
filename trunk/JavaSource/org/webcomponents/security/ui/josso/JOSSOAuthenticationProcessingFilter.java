@@ -7,9 +7,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.josso.gateway.GatewayServiceLocator;
+import org.josso.gateway.assertion.exceptions.AssertionNotValidException;
+import org.josso.gateway.identity.exceptions.IdentityProvisioningException;
+import org.josso.gateway.identity.service.SSOIdentityProviderService;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.AuthenticationException;
+import org.springframework.security.AuthenticationServiceException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.ui.AbstractProcessingFilter;
 import org.springframework.security.ui.FilterChainOrder;
@@ -22,6 +28,8 @@ public class JOSSOAuthenticationProcessingFilter extends AbstractProcessingFilte
 
 	private static final String JOSSO_SECURITY_CHECK_URI = "/josso_security_check";
 
+	private SSOIdentityProviderService ip;
+	
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request) throws AuthenticationException {
 		String assertionId = request.getParameter("josso_assertion_id");
@@ -30,9 +38,17 @@ public class JOSSOAuthenticationProcessingFilter extends AbstractProcessingFilte
 		}
 		logger.debug("josso_security_check received for uri " + StringUtils.quote(request.getRequestURI()) + " assertion id "
 				+ StringUtils.quote(assertionId));
-		JOSSOAuthenticationToken authRequest = new JOSSOAuthenticationToken(assertionId, new GrantedAuthority[0]);
-		Authentication rv = this.getAuthenticationManager().authenticate(authRequest);
-		return rv;
+		
+		try {
+			String jossoSessionId = ip.resolveAuthenticationAssertion(assertionId);
+			JOSSOAuthenticationToken authRequest = new JOSSOAuthenticationToken(jossoSessionId, new GrantedAuthority[0]);
+			Authentication rv = this.getAuthenticationManager().authenticate(authRequest);
+			return rv;
+		} catch (AssertionNotValidException e) {
+			throw new AuthenticationServiceException("Unable to authenticate user with assertionId " + assertionId, e);
+		} catch (IdentityProvisioningException e) {
+			throw new AuthenticationServiceException("Unable to authenticate user with assertionId " + assertionId, e);
+		}
 	}
 
 	@Override
@@ -52,7 +68,13 @@ public class JOSSOAuthenticationProcessingFilter extends AbstractProcessingFilte
 		// only ... in the future each partner app may
 		// store a different auth. token (SSO SESSION) value
 		JOSSOAuthenticationToken authentication = (JOSSOAuthenticationToken) authResult;
-		Cookie cookie = JOSSOUtils.newJossoCookie(request.getContextPath(), authentication.getAssertionId());
+		Cookie cookie = JOSSOUtils.newJossoCookie(request.getContextPath(), authentication.getJossoSessionId());
 		response.addCookie(cookie);
 	}
+
+	@Required
+	public void setGatewayServiceLocator(GatewayServiceLocator gsl) throws Exception {
+		this.ip = gsl.getSSOIdentityProvider();
+	}
+
 }

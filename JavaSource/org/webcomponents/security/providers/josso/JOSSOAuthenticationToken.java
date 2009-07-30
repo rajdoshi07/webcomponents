@@ -11,15 +11,15 @@ public class JOSSOAuthenticationToken extends AbstractAuthenticationToken {
 
 	private static final long serialVersionUID = 1L;
 
-	private String assertionId;
+	private String jossoSessionId;
 
-	public JOSSOAuthenticationToken(String assertionId, GrantedAuthority[] authorities) {
+	public JOSSOAuthenticationToken(String jossoSessionId, GrantedAuthority[] authorities) {
 		super(authorities);
-		this.assertionId = assertionId;
+		this.jossoSessionId = jossoSessionId;
 	}
 
-	public String getAssertionId() {
-		return assertionId;
+	public String getJossoSessionId() {
+		return jossoSessionId;
 	}
 
 	@Override

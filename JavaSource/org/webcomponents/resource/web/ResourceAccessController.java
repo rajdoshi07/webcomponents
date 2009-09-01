@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.jets3t.service.S3ServiceException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,11 +17,13 @@ import org.springframework.web.context.ServletContextAware;
 import org.webcomponents.resource.ResourceDao;
 
 @Controller
-public class ResourceAccessController implements ServletContextAware {
+public class ResourceAccessController implements ServletContextAware, InitializingBean {
 	
 	private static final Logger logger = Logger.getLogger(ResourceAccessController.class);
 	
 	private ResourceDao resourceDao;
+	
+	private String repositoryUri;
 
 	private int offset = 0;
 	
@@ -52,4 +55,16 @@ public class ResourceAccessController implements ServletContextAware {
 		
 	}
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		if(repositoryUri != null) {
+			offset -= repositoryUri.length();
+		}
+	}
+
+	public void setRepositoryUri(String repositoryUri) {
+		this.repositoryUri = repositoryUri;
+	}
+
+	
 }

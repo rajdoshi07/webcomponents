@@ -58,7 +58,7 @@ public class ResourceAccessController implements ServletContextAware, Initializi
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if(repositoryUri != null) {
-			offset -= repositoryUri.length();
+			offset += repositoryUri.length();
 		}
 	}
 

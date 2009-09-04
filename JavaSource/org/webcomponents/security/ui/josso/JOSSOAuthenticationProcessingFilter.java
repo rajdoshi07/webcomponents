@@ -63,11 +63,12 @@ public class JOSSOAuthenticationProcessingFilter extends AbstractProcessingFilte
 	@Override
 	protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authResult) throws IOException {
 		super.onSuccessfulAuthentication(request, response, authResult);
-		// The cookie is valid to for the partner application
-		// only ... in the future each partner app may
-		// store a different auth. token (SSO SESSION) value
+
 		JOSSOAuthenticationToken authentication = (JOSSOAuthenticationToken) authResult;
 		JOSSOUtils.setCookie(request, response, authentication.getJossoSessionId());
+		
+		// Store in session last time accessed remote session
+		JOSSOUtils.setTimestamp(request, authentication);
 	}
 
 	@Required

@@ -2,7 +2,6 @@ package org.webcomponents.security.ui.josso;
 
 import java.io.IOException;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -68,8 +67,7 @@ public class JOSSOAuthenticationProcessingFilter extends AbstractProcessingFilte
 		// only ... in the future each partner app may
 		// store a different auth. token (SSO SESSION) value
 		JOSSOAuthenticationToken authentication = (JOSSOAuthenticationToken) authResult;
-		Cookie cookie = JOSSOUtils.newJossoCookie(request.getContextPath(), authentication.getJossoSessionId());
-		response.addCookie(cookie);
+		JOSSOUtils.setCookie(request, response, authentication.getJossoSessionId());
 	}
 
 	@Required

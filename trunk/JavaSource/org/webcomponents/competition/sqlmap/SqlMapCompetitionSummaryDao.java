@@ -11,6 +11,10 @@ import org.webcomponents.summary.sqlmap.SqlMapClusterDAO;
 
 public class SqlMapCompetitionSummaryDao extends SqlMapClusterDAO implements CompetitionSummaryDao {
 
+	private String dailyParticipantsStatement = "getDailyParticipants";
+	private String monthlyParticipantsStatement = "getMonthlyParticipants";
+	private String weeklyParticipantsStatement = "getWeeklyParticipants";
+
 	@SuppressWarnings("unchecked")
 	public TreeMap<Date, Number> getDailyParticipantsCount(Date begin, Date end) {
 		Map<String, Date> model = Collections.emptyMap();
@@ -24,7 +28,7 @@ public class SqlMapCompetitionSummaryDao extends SqlMapClusterDAO implements Com
 			}
 			model.put("end", end);
 		}
-		TreeMap<Date, Number> rv = new TreeMap<Date, Number>(getSqlMapClientTemplate().queryForMap(applyNamespace("getDailyParticipants"), model, "DAY", "TOTAL"));
+		TreeMap<Date, Number> rv = new TreeMap<Date, Number>(getSqlMapClientTemplate().queryForMap(dailyParticipantsStatement, model, "DAY", "TOTAL"));
 		return rv;
 	}
 
@@ -45,7 +49,7 @@ public class SqlMapCompetitionSummaryDao extends SqlMapClusterDAO implements Com
 			}
 			model.put("end", end);
 		}
-		TreeMap<Date, Number> rv = new TreeMap<Date, Number>(getSqlMapClientTemplate().queryForMap(applyNamespace("getMonthlyParticipants"), model, "MONTH", "TOTAL"));
+		TreeMap<Date, Number> rv = new TreeMap<Date, Number>(getSqlMapClientTemplate().queryForMap(monthlyParticipantsStatement, model, "MONTH", "TOTAL"));
 		return rv;
 	}
 
@@ -66,12 +70,24 @@ public class SqlMapCompetitionSummaryDao extends SqlMapClusterDAO implements Com
 			}
 			model.put("end", end);
 		}
-		TreeMap<Date, Number> rv = new TreeMap<Date, Number>(getSqlMapClientTemplate().queryForMap(applyNamespace("getWeeklyParticipants"), model, "WEEK", "TOTAL"));
+		TreeMap<Date, Number> rv = new TreeMap<Date, Number>(getSqlMapClientTemplate().queryForMap(weeklyParticipantsStatement, model, "WEEK", "TOTAL"));
 		return rv;
 	}
 
 	public TreeMap<Date, Number> getWeeklyParticipationsCount(Date begin, Date end) {
 		return getWeeklyCount(begin, end);
+	}
+
+	public void setDailyParticipantsStatement(String dailyParticipantsStatement) {
+		this.dailyParticipantsStatement = dailyParticipantsStatement;
+	}
+
+	public void setMonthlyParticipantsStatement(String monthlyParticipantsStatement) {
+		this.monthlyParticipantsStatement = monthlyParticipantsStatement;
+	}
+
+	public void setWeeklyParticipantsStatement(String weeklyParticipantsStatement) {
+		this.weeklyParticipantsStatement = weeklyParticipantsStatement;
 	}
 
 }

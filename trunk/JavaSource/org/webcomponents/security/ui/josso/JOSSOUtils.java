@@ -5,13 +5,16 @@ import java.net.URL;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.josso.gateway.Constants;
+import org.josso.gateway.signon.Constants;
 import org.springframework.util.StringUtils;
+import org.webcomponents.security.providers.josso.JOSSOAuthenticationToken;
 
 public class JOSSOUtils {
 
+	private static final String TIMESTAMP_PREFIX = "org.webcomponents.security.ui.josso.";
 	private static final Logger logger = Logger.getLogger(JOSSOUtils.class);
 
 	/**
@@ -25,30 +28,30 @@ public class JOSSOUtils {
 	 * request. Finally uses current host name.
 	 */
 	public static String buildBackToQueryString(HttpServletRequest request, String uri) {
-		String backto = null;
-
 		// Build the back to url.
 		String contextPath = request.getContextPath();
 
 		// This is the root context
-		if (contextPath == null || "".equals(contextPath))
+		if (!StringUtils.hasText(contextPath)) {
 			contextPath = "/";
+		}
 
 		// Using default host
 		StringBuffer mySelf = request.getRequestURL();
 
 		try {
 			URL url = new URL(mySelf.toString());
-			backto = url.getProtocol() + "://" + url.getHost() + ((url.getPort() > 0) ? ":" + url.getPort() : "");
+			String rv = url.getProtocol() + "://" + url.getHost() + ((url.getPort() > 0) ? ":" + url.getPort() : "");
+			rv += (contextPath.endsWith("/") ? contextPath.substring(0, contextPath.length() - 1) : contextPath) + uri;
+			
+			rv = "?josso_back_to=" + rv;
+			rv = rv + "&" + Constants.PARAM_JOSSO_PARTNERAPP_CONTEXT + "=" + contextPath;
+			rv = rv + "&" + Constants.PARAM_JOSSO_PARTNERAPP_HOST + "=" + request.getServerName();
+			logger.debug("Using josso_back_to : " + rv);
+			return rv;
 		} catch (java.net.MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
-
-		backto += (contextPath.endsWith("/") ? contextPath.substring(0, contextPath.length() - 1) : contextPath) + uri;
-
-		backto = "?josso_back_to=" + backto;
-		logger.debug("Using josso_back_to : " + backto);
-		return backto;
 	}
 
 	/**
@@ -107,4 +110,20 @@ public class JOSSOUtils {
 		response.addCookie(cookie);
 	}
 
+	public static void setTimestamp(HttpServletRequest request, JOSSOAuthenticationToken authentication) {
+		HttpSession session = request.getSession();
+		long now = System.currentTimeMillis();
+		session.setAttribute(TIMESTAMP_PREFIX + authentication.getJossoSessionId(), now);
+	}
+
+	public static long getTimestamp(HttpServletRequest request, JOSSOAuthenticationToken authentication) {
+		HttpSession session = request.getSession();
+		return (Long) session.getAttribute(TIMESTAMP_PREFIX + authentication.getJossoSessionId());
+	}
+	
+	public static void invalidateSession(HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		session.invalidate();
+		cancelCookie(request, response);
+	}
 }

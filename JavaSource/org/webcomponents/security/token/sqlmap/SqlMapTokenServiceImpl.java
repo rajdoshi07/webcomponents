@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-import org.webcomponents.orm.ibatis.support.SqlMapClientDaoSupport;
+import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
 import org.webcomponents.security.token.InvalidKeyException;
 import org.webcomponents.security.token.Token;
 import org.webcomponents.security.token.TokenException;
@@ -14,6 +14,8 @@ import org.webcomponents.security.token.TokenService;
 public class SqlMapTokenServiceImpl extends SqlMapClientDaoSupport implements TokenService {
 	
 	private int defaultSpan = 604800000;	// 1 week
+	private String insertTokenStatement = "insertToken";
+	private String tokenStatement = "getToken";
 
 	public String createToken(Object key, Object value) {
 		Calendar createdAt = Calendar.getInstance();
@@ -35,7 +37,7 @@ public class SqlMapTokenServiceImpl extends SqlMapClientDaoSupport implements To
 		t.setValue(value);
 		t.setExpireAt(expireAt);
 		t.setInsertedAt(createdAt);
-		getSqlMapClientTemplate().insert(applyNamespace("insertToken"), t);
+		getSqlMapClientTemplate().insert(insertTokenStatement, t);
 		return t.getId();
 	}
 
@@ -44,7 +46,7 @@ public class SqlMapTokenServiceImpl extends SqlMapClientDaoSupport implements To
 	}
 
 	public Token getToken(String token, Object key) throws TokenException {
-		Token rv = (Token) getSqlMapClientTemplate().queryForObject(applyNamespace("getToken"), token);
+		Token rv = (Token) getSqlMapClientTemplate().queryForObject(tokenStatement, token);
 		if(rv == null) {
 			throw new TokenNotFoundException(token);
 		}
@@ -52,6 +54,14 @@ public class SqlMapTokenServiceImpl extends SqlMapClientDaoSupport implements To
 			throw new InvalidKeyException(token, key);
 		}
 		return rv;
+	}
+
+	public void setInsertTokenStatement(String insertTokenStatement) {
+		this.insertTokenStatement = insertTokenStatement;
+	}
+
+	public void setTokenStatement(String tokenStatement) {
+		this.tokenStatement = tokenStatement;
 	}
 
 }

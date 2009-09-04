@@ -4,8 +4,11 @@ import java.net.URL;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.josso.gateway.Constants;
+import org.springframework.util.StringUtils;
 
 public class JOSSOUtils {
 
@@ -49,7 +52,45 @@ public class JOSSOUtils {
 	}
 
 	/**
-	 * This creates a new JOSSO Cookie for the given path and value.
+	 * Locates the JOSSO_SESSION cookie in the request.
+	 * 
+	 * @param request
+	 *                the submitted request which is to be authenticated
+	 * @return the cookie value (if present), null otherwise.
+	 */
+	public static Cookie getJossoSessionCookie(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+
+		if ((cookies == null)) {
+			return null;
+		}
+
+		for (int i = 0; i < cookies.length; i++) {
+			if (Constants.JOSSO_SINGLE_SIGN_ON_COOKIE.equals(cookies[i].getName())) {
+				return cookies[i];
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Sets a "cancel cookie" (with maxAge = 0) on the response to disable
+	 * persistent logins.
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	public static void cancelCookie(HttpServletRequest request, HttpServletResponse response) {
+		Cookie cookie = new Cookie(Constants.JOSSO_SINGLE_SIGN_ON_COOKIE, null);
+		cookie.setMaxAge(0);
+		String path = StringUtils.hasLength(request.getContextPath()) ? request.getContextPath() : "/";
+		cookie.setPath(path);
+		response.addCookie(cookie);
+	}
+
+	/**
+	 * Sets a new JOSSO Cookie for the given value.
 	 * 
 	 * @param path
 	 *                the path associated with the cookie, normaly the
@@ -58,23 +99,12 @@ public class JOSSOUtils {
 	 *                the SSO Session ID
 	 * @return
 	 */
-	public static Cookie newJossoCookie(String path, String value) {
-
-		// Some browsers don't like cookies without paths. This is
-		// useful for partner applications configured in the root
-		// context
-		if (path == null || "".equals(path))
-			path = "/";
-
-		Cookie ssoCookie = new Cookie(org.josso.gateway.Constants.JOSSO_SINGLE_SIGN_ON_COOKIE, value);
-		ssoCookie.setMaxAge(-1);
-		ssoCookie.setPath(path);
-
-		// TODO : Check domain / secure ?
-		// ssoCookie.setDomain(cfg.getSessionTokenScope());
-		// ssoCookie.setSecure(true);
-
-		return ssoCookie;
+	public static void setCookie(HttpServletRequest request, HttpServletResponse response, String jossoSessionId) {
+		Cookie cookie = new Cookie(Constants.JOSSO_SINGLE_SIGN_ON_COOKIE, jossoSessionId);
+		cookie.setMaxAge(-1);
+		String path = StringUtils.hasLength(request.getContextPath()) ? request.getContextPath() : "/";
+		cookie.setPath(path);
+		response.addCookie(cookie);
 	}
 
 }

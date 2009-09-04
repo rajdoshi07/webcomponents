@@ -1,6 +1,5 @@
 package org.webcomponents.security.ui.josso;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,9 +30,7 @@ public class JOSSOLogoutFilter extends org.springframework.security.ui.logout.Lo
 		String logoutUrl = this.gatewayLogoutUrl + JOSSOUtils.buildBackToQueryString(request, getLogoutSuccessUrl());
 		logger.debug("Redirecting to logout url '" + logoutUrl + "'");
 
-		// Clear previous COOKIE ...
-		Cookie ssoCookie = JOSSOUtils.newJossoCookie(request.getContextPath(), "-");
-		response.addCookie(ssoCookie);
+		JOSSOUtils.cancelCookie(request, response);
 		return logoutUrl;
 	}
 

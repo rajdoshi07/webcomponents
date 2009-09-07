@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.josso.gateway.GatewayServiceLocator;
 import org.josso.gateway.session.exceptions.NoSuchSessionException;
 import org.josso.gateway.session.exceptions.SSOSessionException;
@@ -16,11 +17,14 @@ import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.ui.FilterChainOrder;
 import org.springframework.security.ui.SpringSecurityFilter;
+import org.springframework.util.StringUtils;
 import org.webcomponents.security.providers.josso.JOSSOAuthenticationToken;
 
 public class JOSSOSessionPingFilter extends SpringSecurityFilter {
+	
+	private static final Logger logger = Logger.getLogger(JOSSOSessionPingFilter.class);
 
-	public static final long DEFAULT_SESSION_ACCESS_MIN_INTERVAL = 1000;
+	private static final long DEFAULT_SESSION_ACCESS_MIN_INTERVAL = 1000;
 
 	private long sessionAccessMinInterval = DEFAULT_SESSION_ACCESS_MIN_INTERVAL;
 
@@ -33,9 +37,12 @@ public class JOSSOSessionPingFilter extends SpringSecurityFilter {
 			JOSSOAuthenticationToken token = (JOSSOAuthenticationToken) authentication;
 			long timestamp = JOSSOUtils.getTimestamp(request, token);
 			long now = System.currentTimeMillis();
+			logger.trace("Now " + now + ". Last JOSSO session ping " + timestamp + ".");
 			if((now - timestamp) > this.sessionAccessMinInterval) {
+				logger.trace("Now " + now + ". Last JOSSO session ping " + timestamp + ". Ping required");
 				try {
 					sm.accessSession(token.getJossoSessionId());
+					logger.debug("JOSSO session " + StringUtils.quote(token.getJossoSessionId()) + " pinged at " + timestamp);
 					JOSSOUtils.setTimestamp(request, token);
 				} catch (NoSuchSessionException e) {
 					logger.debug("Unable to ping JOSSO session " + token.getJossoSessionId() + ". " + e.getMessage());

@@ -8,6 +8,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.josso.gateway.Constants;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,6 +26,8 @@ import org.springframework.util.StringUtils;
 import org.webcomponents.security.providers.josso.JOSSOAuthenticationToken;
 
 public class JOSSOSessionCookieProcessingFilter extends SpringSecurityFilter implements InitializingBean {
+	
+	private static final Logger logger = Logger.getLogger(JOSSOSessionCookieProcessingFilter.class);
 
 	private ApplicationEventPublisher eventPublisher;
 	private AuthenticationManager authenticationManager;
@@ -35,6 +38,7 @@ public class JOSSOSessionCookieProcessingFilter extends SpringSecurityFilter imp
 			Cookie sessionCookie = JOSSOUtils.getJossoSessionCookie(request);
 			if (sessionCookie != null) {
 				String sessionId = sessionCookie.getValue();
+				logger.debug("Authentication empty, JOSSO session cookie found " + StringUtils.quote(sessionId));
 				JOSSOAuthenticationToken authRequest = new JOSSOAuthenticationToken(sessionId, new GrantedAuthority[0]);
 				try {
 					Authentication auth = this.authenticationManager.authenticate(authRequest);
@@ -61,9 +65,11 @@ public class JOSSOSessionCookieProcessingFilter extends SpringSecurityFilter imp
 
 	protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException object) {
 		JOSSOUtils.cancelCookie(request, response);
+		logger.debug("Unsuccessful authentication." + (object == null ? "" : " " + object.getMessage()) + " JOSSO session id cookie removed.");
 	}
 
 	protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
+		logger.debug("Successful authentication for " + auth.getName());
 	}
 
 	@Override

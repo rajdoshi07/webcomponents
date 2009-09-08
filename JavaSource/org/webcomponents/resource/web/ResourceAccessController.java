@@ -30,8 +30,12 @@ public class ResourceAccessController implements ServletContextAware {
 		if(path != null) {
 			path = path.substring(offset);
 			String url = resourceDao.getAccessUrl(path);
-			logger.debug("Redirecting request path: " + path + " to " + url);
-			response.sendRedirect(url);
+			if(url.startsWith("http")) {
+				logger.debug("Redirecting request path: " + path + " to " + url);
+				response.sendRedirect(url);
+			} else {
+				
+			}
 		}
 	}
 	

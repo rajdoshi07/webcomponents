@@ -7,6 +7,7 @@ import org.springframework.validation.Errors;
 import org.webcomponents.membership.web.SubscriptionCommand;
 import org.webcomponents.membership.web.SubscriptionFormController;
 
+import com.octo.captcha.service.CaptchaServiceException;
 import com.octo.captcha.service.image.AbstractManageableImageCaptchaService;
 
 public class CaptchaFormController extends FormController {
@@ -28,8 +29,12 @@ public class CaptchaFormController extends FormController {
 			return;
 		}
 		if(!errors.hasFieldErrors("humanTest")) {
-			Boolean valid = captcha.validateResponseForID(session.getId(), command.getHumanTest());
-			if(!valid) {
+			try {
+				Boolean valid = captcha.validateResponseForID(session.getId(), command.getHumanTest());
+				if(!valid) {
+					errors.rejectValue("humanTest", "invalid");
+				}
+			} catch (CaptchaServiceException e) {
 				errors.rejectValue("humanTest", "invalid");
 			}
 		}

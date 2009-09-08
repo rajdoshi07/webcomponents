@@ -29,9 +29,9 @@
 		<h1><spring:message code="label.subscription"/></h1>
 		<form:form commandName="subscription">
 			<div class="textField horz">
-				<form:label path="email"><spring:message code="label.email"/></form:label>
-				<form:input path="email" maxlength="60"/>
-				<form:errors path="email" cssClass="error"/>
+				<form:label path="screenName"><spring:message code="label.screenName"/></form:label>
+				<form:input path="screenName" maxlength="15"/>
+				<form:errors path="screenName" cssClass="error"/>
 			</div>
 			<div class="textField horz">
 				<form:label path="password"><spring:message code="label.password"/></form:label>
@@ -42,6 +42,11 @@
 				<form:label path="passwordConfirm"><spring:message code="label.passwordConfirm"/></form:label>
 				<form:password path="passwordConfirm" maxlength="25"/>
 				<form:errors path="passwordConfirm" cssClass="error"/>
+			</div>
+			<div class="textField horz">
+				<form:label path="email"><spring:message code="label.email"/></form:label>
+				<form:input path="email" maxlength="60"/>
+				<form:errors path="email" cssClass="error"/>
 			</div>
 <jsp:scriptlet>
 java.util.UUID uuid = java.util.UUID.randomUUID();
@@ -54,7 +59,7 @@ pageContext.setAttribute("captchaSrc", contextPath + "/captcha/" + uuid.toString
 			<div id="humanTestField" class="humanTest">		
 				<form:label path="humanTest"><spring:message code="label.captcha"/></form:label>
 				<div><img src="${captchaSrc}" width="182" height="100" alt="captcha"/></div>
-				<form:input path="humanTest" maxlength="64" cssErrorClass="error"/>
+				<input id="humanTest" name="humanTest" maxlength="64" />
 				<form:errors path="humanTest" cssClass="error"/>
 			</div>
 			<fieldset id="privacyPolicyAcceptedField">

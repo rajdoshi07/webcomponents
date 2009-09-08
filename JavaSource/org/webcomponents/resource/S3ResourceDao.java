@@ -2,12 +2,14 @@ package org.webcomponents.resource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -48,17 +50,17 @@ public class S3ResourceDao implements ResourceDao, InitializingBean {
 	}
 	
 	@Override
-	public void put(String dest, File source) throws IOException {
+	public void put(URI dest, File source) throws IOException {
 		try {
 			S3Object obj = new S3Object(source);
-			String key = context + dest;
+			String key = context + dest.toString();
 			obj.setKey(key);
 			obj = s3Service.putObject(bucket, obj);
 		} catch (NoSuchAlgorithmException e) {
-			logger.error("Uploading of file " + source.getAbsolutePath() + " on S3 location " + dest + "failed. " + e.getMessage());
+			logger.error("Uploading of file " + source.getAbsolutePath() + " on S3 location " + dest.toString() + "failed. " + e.getMessage());
 			throw new IOException(e);
 		} catch (S3ServiceException e) {
-			logger.error("Uploading of file " + source.getAbsolutePath() + " on S3 location " + dest + "failed. " + e.getMessage());
+			logger.error("Uploading of file " + source.getAbsolutePath() + " on S3 location " + dest.toString() + "failed. " + e.getMessage());
 			throw new IOException(e);
 		}
 	}
@@ -115,6 +117,17 @@ public class S3ResourceDao implements ResourceDao, InitializingBean {
 		s3Service = new RestS3Service(awsCredentials);
 		bucket = s3Service.getBucket(bucketName);
 		logger.debug("Extracted {bucket: " + StringUtils.quote(bucket.getName()) + ", context: " + StringUtils.quote(context) + " from uri " + this.repository);
+	}
+
+	@Override
+	public File getFile(URI path) throws IOException {
+		return File.createTempFile(FilenameUtils.getName(path.toString()), null);
+	}
+
+	@Override
+	public void export(String path, OutputStream out) throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

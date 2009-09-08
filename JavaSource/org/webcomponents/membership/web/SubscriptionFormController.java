@@ -21,9 +21,8 @@ public class SubscriptionFormController extends CaptchaFormController {
 	protected SubscriptionService subscriptionService;
 	protected int type = 0;
 
-	@RequestMapping(method = RequestMethod.GET)
 	@ModelAttribute("subscription")
-	public SubscriptionCommand setupForm() {
+	public SubscriptionCommand getCommand() {
 		SubscriptionCommand rv = new SubscriptionCommand();
 		rv.setType(type);
 		rv.setStatus(MemberStatus.ACTIVE);

@@ -3,6 +3,7 @@ package org.webcomponents.web.servlet.mvc;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -21,6 +22,8 @@ import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class FormController implements InitializingBean {
@@ -106,6 +109,11 @@ public class FormController implements InitializingBean {
 				validators[i].validate(command, errors);
 			}
 		}
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public Map<String, Object> setupForm() {
+		return Collections.emptyMap();
 	}
 
 }

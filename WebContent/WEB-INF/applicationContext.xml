@@ -35,12 +35,10 @@
 	</bean>
 	<bean id="weeklyTokenService" class="org.webcomponents.security.token.sqlmap.SqlMapTokenServiceImpl">
 		<property name="sqlMapClient" ref="sqlMapClient"/>
-		<property name="namespace" value="token"/>
 	</bean>
 	<bean id="dailyTokenService" class="org.webcomponents.security.token.sqlmap.SqlMapTokenServiceImpl">
 		<property name="sqlMapClient" ref="sqlMapClient"/>
 		<property name="defaultSpan" value="86400000"/>
-		<property name="namespace" value="token"/>
 	</bean>
 	<bean class="com.octo.captcha.service.image.DefaultManageableImageCaptchaService" id="imageCaptchaService">
 		<property name="captchaEngine" ref="captchaEngine"/>

@@ -44,7 +44,7 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 			String id = personDao.insertPerson((Person)member, password, principal);
 			return personDao.getPerson(id);
 		} catch (DataIntegrityViolationException e) {
-			Person p = personDao.getPerson(member.getEmail());
+			Person p = personDao.getPerson(member.getUsername());
 			if(p == null) {
 				throw new DuplicatedUsernameException(member.getUsername());
 			} else {

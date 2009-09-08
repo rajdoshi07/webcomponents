@@ -22,9 +22,8 @@ public class EditPasswordController extends FormController {
 	
 	private Membership membership;
 	
-	@RequestMapping(method=RequestMethod.GET)
 	@ModelAttribute("command")
-	public EditPasswordCommand setupForm() {
+	public EditPasswordCommand getCommand() {
 		return new EditPasswordCommand();
 	}
 	

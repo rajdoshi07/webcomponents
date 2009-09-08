@@ -8,7 +8,7 @@ public class PrivacyPolicyValidator implements Validator {
 
 	@SuppressWarnings("unchecked")
 	public boolean supports(Class clazz) {
-		return org.webcomponents.membership.Subscription.class.isAssignableFrom(clazz);
+		return Subscription.class.isAssignableFrom(clazz);
 	}
 
 	public void validate(Object command, Errors errors) {

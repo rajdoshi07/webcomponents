@@ -3,8 +3,9 @@
 <sqlMap namespace="membership">
 	<typeAlias alias="person" type="org.webcomponents.membership.Person"/>
 	<resultMap id="personResult" class="person">
+		<result property="screenName" column="username"/>
 		<result property="status" column="status"/>
-		<result property="email" column="username"/>
+		<result property="email" column="email"/>
 		<result property="emailStatus" column="email_status"/>
 		<result property="createdAt" column="created_at"/>
 		<result property="createdBy" column="created_by"/>
@@ -17,17 +18,17 @@
 		where username = lower(#value#)
 	</select>
 	<insert id="insertPerson">
-		insert into users (username, email_status, password, status, privacy_policy, terms_of_use, created_at, created_by, updated_by)
-		values (lower(#person.email#), 0, md5(#password#), #person.status#, #person.privacyPolicyAccepted#, #person.termsOfUseAccepted#, #person.createdAt#, #updatedBy#, #updatedBy#)
+		insert into users (username, email, email_status, password, status, privacy_policy, terms_of_use, created_at, created_by, updated_by)
+		values (#person.screenName#, lower(#person.email#), 0, md5(#password#), #person.status#, #person.privacyPolicyAccepted#, #person.termsOfUseAccepted#, #person.createdAt#, #updatedBy#, #updatedBy#)
 	</insert>
 	<update id="updateStatus">
 		update users set status = #status#, updated_by = #updatedBy# where username = lower(#username#)
 	</update>
 	<update id="updateEmail">
-		update users set username = lower(#email#), email_status = 0, updated_by = #updatedBy# where username = lower(#username#)
+		update users set email = lower(#email#), email_status = 0, updated_by = #updatedBy# where username = lower(#username#)
 	</update>
 	<update id="updateEmailStatus">
-		update users set email_status = #status#, status = 1, updated_by = #updatedBy# where username = lower(#email#) AND status = 0
+		update users set email_status = #status#, status = 1, updated_by = #updatedBy# where email = lower(#email#) and status = 0
 	</update>
 	<update id="updatePassword">
 		update users set password = md5(#password#), updated_by = #updatedBy# where username = lower(#username#)
@@ -38,25 +39,23 @@
 	</delete>
 	<update id="updatePerson">
 		update users set
-			FIRSTNAME = #person.firstName#,
-			LASTNAME = #person.lastName#,
-			BIRTHDATE = #person.birthdate#,
-			GENDER = #person.gender#,
-			STREET = #person.street#,
-			TOWN = #person.town#,
-			PROVINCE = #person.province#,
-			COUNTRY = #person.country#,
-			POSTALCODE = #person.postalCode#,
-			PHONE = #person.phone#,
-			FAX = #person.fax#,
-			MOBILE_ENABLED = #person.mobileEnabled#,
-			EMAIL_ENABLED = #person.emailEnabled#,
-			updated_by = #updatedBy#
-		where username = lower(#email#)
+			firstname = #person.firstName#,
+			lastname = #person.lastName#,
+			birthdate = #person.birthdate#,
+			gender = #person.gender#,
+			street = #person.street#,
+			town = #person.town#,
+			province = #person.province#,
+			country = #person.country#,
+			postalcode = #person.postalCode#,
+			phone = #person.phone#,
+			fax = #person.fax#,
+			updated_by = #person.updatedBy#
+		where username = #person.screenName#
 	</update>
 	<select id="findByKey" parameterClass="java.util.List" resultMap="personResult">
 		select *
 		from users
-		where <iterate prepend="username IN" open="(" close=")" conjunction=",">LOWER(#[]#)</iterate>
+		where <iterate prepend="lower(username) IN" open="(" close=")" conjunction=",">lower(#[]#)</iterate> <iterate prepend="or email in" open="(" close=")" conjunction=",">lower(#[]#)</iterate>
 	</select>
 </sqlMap>

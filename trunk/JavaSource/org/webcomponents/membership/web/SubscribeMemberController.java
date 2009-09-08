@@ -30,9 +30,8 @@ public class SubscribeMemberController extends CaptchaFormController {
 	
 	private String defaultGroup;
 	
-	@RequestMapping(method = RequestMethod.GET)
 	@ModelAttribute("subscription")
-	public SubscribeMemberCommand setupForm() {
+	public SubscribeMemberCommand getCommand() {
 		SubscribeMemberCommand rv = new SubscribeMemberCommand();
 		rv.setStatus(MemberStatus.PENDING);
 		return rv;

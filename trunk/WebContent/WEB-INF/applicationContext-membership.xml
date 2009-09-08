@@ -9,10 +9,10 @@
 		<constructor-arg>
 			<bean class="org.webcomponents.membership.sqlmap.SqlMapPersonDao">
 				<property name="sqlMapClient" ref="sqlMapClient"/>
-				<property name="namespace" value="membership"/>
 			</bean>
 		</constructor-arg>
 		<property name="passwordRegExp" value="\w{5,32}"/>
+		<property name="usernameRegExp" value="\w{3,15}"/>
 	</bean>
 	<bean id="membershipTemplate" abstract="true" parent="mailTemplate">
 		<property name="sender">

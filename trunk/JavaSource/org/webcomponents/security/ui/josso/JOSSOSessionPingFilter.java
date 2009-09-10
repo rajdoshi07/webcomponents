@@ -35,21 +35,23 @@ public class JOSSOSessionPingFilter extends SpringSecurityFilter {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication instanceof JOSSOAuthenticationToken) {
 			JOSSOAuthenticationToken token = (JOSSOAuthenticationToken) authentication;
-			long timestamp = JOSSOUtils.getTimestamp(request, token);
-			long now = System.currentTimeMillis();
-			logger.trace("Now " + now + ". Last JOSSO session ping " + timestamp + ".");
-			if((now - timestamp) > this.sessionAccessMinInterval) {
-				logger.trace("Now " + now + ". Last JOSSO session ping " + timestamp + ". Ping required");
-				try {
-					sm.accessSession(token.getJossoSessionId());
-					logger.debug("JOSSO session " + StringUtils.quote(token.getJossoSessionId()) + " pinged at " + timestamp);
-					JOSSOUtils.setTimestamp(request, token);
-				} catch (NoSuchSessionException e) {
-					logger.debug("Unable to ping JOSSO session " + token.getJossoSessionId() + ". " + e.getMessage());
-					JOSSOUtils.invalidateSession(request, response);
-				} catch (SSOSessionException e) {
-					logger.warn("Unable to ping JOSSO session " + token.getJossoSessionId() + ". " + e.getMessage());
-					JOSSOUtils.invalidateSession(request, response);
+			Long timestamp = JOSSOUtils.getTimestamp(request, token);
+			if(timestamp != null) {
+				long now = System.currentTimeMillis();
+				logger.trace("Now " + now + ". Last JOSSO session ping " + timestamp + ".");
+				if((now - timestamp) > this.sessionAccessMinInterval) {
+					logger.trace("Now " + now + ". Last JOSSO session ping " + timestamp + ". Ping required");
+					try {
+						sm.accessSession(token.getJossoSessionId());
+						logger.debug("JOSSO session " + StringUtils.quote(token.getJossoSessionId()) + " pinged at " + timestamp);
+						JOSSOUtils.setTimestamp(request, token);
+					} catch (NoSuchSessionException e) {
+						logger.debug("Unable to ping JOSSO session " + token.getJossoSessionId() + ". " + e.getMessage());
+						JOSSOUtils.invalidateSession(request, response);
+					} catch (SSOSessionException e) {
+						logger.warn("Unable to ping JOSSO session " + token.getJossoSessionId() + ". " + e.getMessage());
+						JOSSOUtils.invalidateSession(request, response);
+					}
 				}
 			}
 		}

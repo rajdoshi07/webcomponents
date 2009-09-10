@@ -116,9 +116,14 @@ public class JOSSOUtils {
 		session.setAttribute(TIMESTAMP_PREFIX + authentication.getJossoSessionId(), now);
 	}
 
-	public static long getTimestamp(HttpServletRequest request, JOSSOAuthenticationToken authentication) {
+	public static Long getTimestamp(HttpServletRequest request, JOSSOAuthenticationToken authentication) {
 		HttpSession session = request.getSession();
-		return (Long) session.getAttribute(TIMESTAMP_PREFIX + authentication.getJossoSessionId());
+		String jossoSessionId = authentication.getJossoSessionId();
+		Long rv = null;
+		if(StringUtils.hasText(jossoSessionId)) {
+			rv = (Long) session.getAttribute(TIMESTAMP_PREFIX + jossoSessionId);
+		}
+		return rv;
 	}
 	
 	public static void invalidateSession(HttpServletRequest request, HttpServletResponse response) {

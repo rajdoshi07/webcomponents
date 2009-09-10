@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -77,22 +76,9 @@ public class S3ResourceDao implements ResourceDao, InitializingBean {
 	}
 
 	@Override
-	public String getAccessUrl(String relativeUrl) throws IOException {
-		Calendar expiringOn = Calendar.getInstance(TIME_ZONE);
-		expiringOn.add(Calendar.MINUTE, accessTime);
+	public void remove(URI path) throws IOException {
 		try {
-			String rv = S3Service.createSignedGetUrl(bucket.getName(), context + relativeUrl, awsCredentials, expiringOn.getTime());
-			return rv;
-		} catch (S3ServiceException e) {
-			logger.error("Unable to grant an access url to resource " + relativeUrl + ". " + e.getMessage());
-			throw new IOException(e);
-		}
-	}
-
-	@Override
-	public void remove(String path) throws IOException {
-		try {
-			s3Service.deleteObject(bucket, context + path);
+			s3Service.deleteObject(bucket, context + path.toString());
 		} catch (S3ServiceException e) {
 			logger.error("Unable to remove resource " + path + ". " + e.getMessage());
 			throw new IOException(e);
@@ -104,9 +90,16 @@ public class S3ResourceDao implements ResourceDao, InitializingBean {
 	}
 
 	@Override
-	public URI getAccessUri(URI relativeUrl) throws IOException, URISyntaxException {
-		String url = getAccessUrl(relativeUrl.toString());
-		return new URI(url);
+	public URI getAccessUri(URI relativeUrl) throws IOException {
+		Calendar expiringOn = Calendar.getInstance(TIME_ZONE);
+		expiringOn.add(Calendar.MINUTE, accessTime);
+		try {
+			String rv = S3Service.createSignedGetUrl(bucket.getName(), context + relativeUrl, awsCredentials, expiringOn.getTime());
+			return URI.create(rv);
+		} catch (S3ServiceException e) {
+			logger.error("Unable to grant an access url to resource " + relativeUrl + ". " + e.getMessage());
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -125,7 +118,7 @@ public class S3ResourceDao implements ResourceDao, InitializingBean {
 	}
 
 	@Override
-	public void export(String path, OutputStream out) throws IOException {
+	public void export(URI uri, OutputStream out) throws IOException {
 		// TODO Auto-generated method stub
 		
 	}

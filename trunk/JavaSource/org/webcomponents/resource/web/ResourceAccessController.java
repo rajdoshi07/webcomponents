@@ -1,6 +1,8 @@
 package org.webcomponents.resource.web;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -28,13 +30,18 @@ public class ResourceAccessController implements ServletContextAware {
 	public void grantResourceAccess(HttpServletRequest request, HttpServletResponse response) throws S3ServiceException, IOException {
 		String path = request.getRequestURI();
 		if(path != null) {
-			path = path.substring(offset);
-			String url = resourceDao.getAccessUrl(path);
-			if(url.startsWith("http")) {
-				logger.debug("Redirecting request path: " + path + " to " + url);
-				response.sendRedirect(url);
+			URI uri = URI.create(path.substring(offset));
+			URI url = resourceDao.getAccessUri(uri);
+			if(url.isAbsolute()) {
+				logger.debug("Redirecting request path: " + path + " to " + url.toString());
+				response.sendRedirect(url.toString());
 			} else {
-				
+				OutputStream out = response.getOutputStream();
+				try {
+					resourceDao.export(uri, out);
+				} finally {
+					out.flush();
+				}
 			}
 		}
 	}

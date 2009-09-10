@@ -4,20 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 public interface ResourceDao {
 	
 	void put(URI path, File source) throws IOException;
 
-	void remove(String path) throws IOException;
+	void remove(URI path) throws IOException;
 
-	String getAccessUrl(String path) throws IOException;
-	
-	URI getAccessUri(URI path) throws IOException, URISyntaxException;
+	URI getAccessUri(URI path) throws IOException;
 	
 	File getFile(URI path) throws IOException;
 	
-	public void export(String path, OutputStream out) throws IOException;
+	public void export(URI path, OutputStream out) throws IOException;
 	
 }

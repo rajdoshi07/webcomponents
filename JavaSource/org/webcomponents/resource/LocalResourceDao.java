@@ -1,10 +1,13 @@
 package org.webcomponents.resource;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 
@@ -39,6 +42,17 @@ public class LocalResourceDao implements ResourceDao {
 
 	@Override
 	public void export(URI path, OutputStream out) throws IOException {
+		File r = root.getFile();
+		File file = new File(r, path.toString());
+		if(!file.exists()) {
+			return;
+		}
+		InputStream is = new FileInputStream(file);
+		try {
+			IOUtils.copy(is, out);
+		} finally {
+			is.close();
+		}
 		// TODO Auto-generated method stub
 		
 	}

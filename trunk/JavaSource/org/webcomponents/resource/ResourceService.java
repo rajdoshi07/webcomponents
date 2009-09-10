@@ -23,8 +23,10 @@ public interface ResourceService {
 	
 	public int getMaxResources(Object entityId);
 	
+	public URI getAccessUri(URI resource) throws IOException;
+	
 	public void export(URI resource, OutputStream out) throws IOException;
 
 	public void remove(URI resource) throws IOException;
-	
+
 }

@@ -9,8 +9,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.josso.gateway.signon.Constants;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.webcomponents.security.providers.josso.JOSSOAuthenticationToken;
 
 public class JOSSOUtils {
 
@@ -110,25 +110,17 @@ public class JOSSOUtils {
 		response.addCookie(cookie);
 	}
 
-	public static void setTimestamp(HttpServletRequest request, JOSSOAuthenticationToken authentication) {
+	public static void setTimestamp(HttpServletRequest request, String jossoSessionId, Long timestamp) {
+		Assert.hasText(jossoSessionId);
+		Assert.notNull(timestamp);
 		HttpSession session = request.getSession();
-		long now = System.currentTimeMillis();
-		session.setAttribute(TIMESTAMP_PREFIX + authentication.getJossoSessionId(), now);
+		session.setAttribute(TIMESTAMP_PREFIX + jossoSessionId, timestamp);
 	}
 
-	public static Long getTimestamp(HttpServletRequest request, JOSSOAuthenticationToken authentication) {
+	public static Long getTimestamp(HttpServletRequest request, String jossoSessionId) {
+		Assert.hasText(jossoSessionId);
 		HttpSession session = request.getSession();
-		String jossoSessionId = authentication.getJossoSessionId();
-		Long rv = null;
-		if(StringUtils.hasText(jossoSessionId)) {
-			rv = (Long) session.getAttribute(TIMESTAMP_PREFIX + jossoSessionId);
-		}
-		return rv;
+		return (Long) session.getAttribute(TIMESTAMP_PREFIX + jossoSessionId);
 	}
 	
-	public static void invalidateSession(HttpServletRequest request, HttpServletResponse response) {
-		HttpSession session = request.getSession();
-		session.invalidate();
-		cancelCookie(request, response);
-	}
 }

@@ -66,9 +66,6 @@ public class JOSSOAuthenticationProcessingFilter extends AbstractProcessingFilte
 
 		JOSSOAuthenticationToken authentication = (JOSSOAuthenticationToken) authResult;
 		JOSSOUtils.setCookie(request, response, authentication.getJossoSessionId());
-		
-		// Store in session last time accessed remote session
-		JOSSOUtils.setTimestamp(request, authentication);
 	}
 
 	@Required

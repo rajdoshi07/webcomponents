@@ -18,6 +18,7 @@ import org.springframework.security.providers.AuthenticationProvider;
 import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.util.StringUtils;
 
 /**
  * 
@@ -35,11 +36,12 @@ public class JOSSOAuthenticationProvider implements AuthenticationProvider {
 		try {
 			Principal principal = im.findUserInSession(jossoSessionId);
 			if (principal == null) {
+				logger.debug("No principal found for JOSSO Session ID " + StringUtils.quote(jossoSessionId));
 				return null;
 			}
-			logger.debug("Principal checked for SSO Session '" + jossoSessionId + "' : " + principal);
+			logger.debug("Principal found for JOSSO Session ID " + StringUtils.quote(jossoSessionId) + ": " + principal);
 			UserDetails details = retrieveUser(jossoSessionId, principal.getName(), auth);
-			logger.debug("There is no associated principal for SSO Session '" + jossoSessionId + "'");
+			logger.debug("Roles of principal " + principal + ":" + details.getAuthorities());
 			
 			Authentication rv = createSuccessAuthentication(principal, auth, details);
 			return rv;

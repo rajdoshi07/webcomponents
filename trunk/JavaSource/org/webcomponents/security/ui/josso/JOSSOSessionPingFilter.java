@@ -86,6 +86,7 @@ public class JOSSOSessionPingFilter extends SpringSecurityFilter {
 		this.sm = gsl.getSSOSessionManager();
 	}
 
+	@Required
 	public void setLogoutUrl(String logoutUrl) {
 		this.logoutUrl = logoutUrl;
 	}

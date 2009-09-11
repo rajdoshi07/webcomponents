@@ -24,38 +24,52 @@ public class JOSSOSessionPingFilter extends SpringSecurityFilter {
 	
 	private static final Logger logger = Logger.getLogger(JOSSOSessionPingFilter.class);
 
-	private static final long DEFAULT_SESSION_ACCESS_MIN_INTERVAL = 1000;
+	private static final long DEFAULT_SESSION_ACCESS_MIN_INTERVAL = 5000;
 
 	private long sessionAccessMinInterval = DEFAULT_SESSION_ACCESS_MIN_INTERVAL;
 
 	private SSOSessionManagerService sm;
+	
+	private String logoutUrl;
 
 	@Override
 	protected void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication instanceof JOSSOAuthenticationToken) {
 			JOSSOAuthenticationToken token = (JOSSOAuthenticationToken) authentication;
-			Long timestamp = JOSSOUtils.getTimestamp(request, token);
-			if(timestamp != null) {
-				long now = System.currentTimeMillis();
-				logger.trace("Now " + now + ". Last JOSSO session ping " + timestamp + ".");
-				if((now - timestamp) > this.sessionAccessMinInterval) {
-					logger.trace("Now " + now + ". Last JOSSO session ping " + timestamp + ". Ping required");
-					try {
-						sm.accessSession(token.getJossoSessionId());
-						logger.debug("JOSSO session " + StringUtils.quote(token.getJossoSessionId()) + " pinged at " + timestamp);
-						JOSSOUtils.setTimestamp(request, token);
-					} catch (NoSuchSessionException e) {
-						logger.debug("Unable to ping JOSSO session " + token.getJossoSessionId() + ". " + e.getMessage());
-						JOSSOUtils.invalidateSession(request, response);
-					} catch (SSOSessionException e) {
-						logger.warn("Unable to ping JOSSO session " + token.getJossoSessionId() + ". " + e.getMessage());
-						JOSSOUtils.invalidateSession(request, response);
-					}
+			long now = System.currentTimeMillis();
+			Long timestamp = JOSSOUtils.getTimestamp(request, token.getJossoSessionId());
+			if(timestamp == null ||(now - timestamp) > this.sessionAccessMinInterval) {
+				try {
+					sm.accessSession(token.getJossoSessionId());
+					logger.debug("JOSSO session " + StringUtils.quote(token.getJossoSessionId()) + " pinged at " + now);
+					JOSSOUtils.setTimestamp(request, token.getJossoSessionId(), now);
+				} catch (NoSuchSessionException e) {
+					logger.debug("Unable to ping JOSSO session " + token.getJossoSessionId() + ". " + e.getMessage());
+					String redirect = getContextualLogoutUrl(request, logoutUrl);
+					response.sendRedirect(redirect);
+					return;
+				} catch (SSOSessionException e) {
+					logger.warn("Unable to ping JOSSO session " + token.getJossoSessionId() + ". " + e.getMessage());
+					String redirect = getContextualLogoutUrl(request, logoutUrl);
+					response.sendRedirect(redirect);
+					return;
 				}
 			}
 		}
 		chain.doFilter(request, response);
+	}
+
+	private String getContextualLogoutUrl(HttpServletRequest request, String url) {
+		String contextPath = request.getContextPath();
+		if("/".equals(contextPath)) {
+			contextPath = "";
+		}
+		if(contextPath.endsWith("/")) {
+			contextPath = contextPath.substring(0, contextPath.length() - 1);
+		}
+		String rv = contextPath + url;
+		return rv;
 	}
 
 	@Override
@@ -70,6 +84,10 @@ public class JOSSOSessionPingFilter extends SpringSecurityFilter {
 	@Required
 	public void setGatewayServiceLocator(GatewayServiceLocator gsl) throws Exception {
 		this.sm = gsl.getSSOSessionManager();
+	}
+
+	public void setLogoutUrl(String logoutUrl) {
+		this.logoutUrl = logoutUrl;
 	}
 
 }

@@ -8,9 +8,6 @@ import org.josso.gateway.identity.SSORole;
 import org.josso.gateway.identity.exceptions.NoSuchUserException;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
 import org.josso.gateway.identity.service.SSOIdentityManagerService;
-import org.josso.gateway.session.exceptions.NoSuchSessionException;
-import org.josso.gateway.session.exceptions.SSOSessionException;
-import org.josso.gateway.session.service.SSOSessionManagerService;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
@@ -32,8 +29,6 @@ public class JOSSOAuthenticationProvider implements AuthenticationProvider {
 
 	private SSOIdentityManagerService im;
 
-	private SSOSessionManagerService sm;
-
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		JOSSOAuthenticationToken auth = (JOSSOAuthenticationToken) authentication;
 		String jossoSessionId = auth.getJossoSessionId();
@@ -47,25 +42,10 @@ public class JOSSOAuthenticationProvider implements AuthenticationProvider {
 			logger.debug("There is no associated principal for SSO Session '" + jossoSessionId + "'");
 			
 			Authentication rv = createSuccessAuthentication(principal, auth, details);
-
-			/**
-			 * Access sso session related with given the given SSO session
-			 * identifier. In case the session is invalid or cannot be
-			 * asserted an SSOException is thrown.
-			 */
-			sm.accessSession(jossoSessionId);
-			
-			// if (entry != null)
-			// propagateSecurityContext(request, entry.principal);
-			//
 			return rv;
 		} catch (NoSuchUserException e) {
 			throw new UsernameNotFoundException("Unable to find user in session " + jossoSessionId, e);
-		} catch (NoSuchSessionException e) {
-			throw new AuthenticationServiceException("Unable to get user in session " + jossoSessionId, e);
 		} catch (SSOIdentityException e) {
-			throw new AuthenticationServiceException("Unable to get user in session " + jossoSessionId, e);
-		} catch (SSOSessionException e) {
 			throw new AuthenticationServiceException("Unable to get user in session " + jossoSessionId, e);
 		}
 	}
@@ -95,7 +75,6 @@ public class JOSSOAuthenticationProvider implements AuthenticationProvider {
 	@Required
 	public void setGatewayServiceLocator(GatewayServiceLocator gsl) throws Exception {
 		this.im = gsl.getSSOIdentityManager();
-		this.sm = gsl.getSSOSessionManager();
 	}
 
 	@SuppressWarnings("unchecked")

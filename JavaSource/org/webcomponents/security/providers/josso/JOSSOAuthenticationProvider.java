@@ -18,7 +18,6 @@ import org.springframework.security.providers.AuthenticationProvider;
 import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UsernameNotFoundException;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 /**

@@ -16,9 +16,11 @@
 	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
 			<props>
-				<prop key="TokenExpiredException">membership/validateEmail</prop>
-				<prop key="InvalidTokenException">membership/validateEmail</prop>
+				<prop key="TokenExpiredException">error</prop>
+				<prop key="InvalidTokenException">error</prop>
+				<prop key="TokenNotFoundException">error</prop>
 				<prop key="MissingServletRequestParameterException">error</prop>
+				<prop key="DuplicatedGroupException">error</prop>
 			</props>
 		</property>
 	</bean>

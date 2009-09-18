@@ -8,7 +8,7 @@ public interface ResourceMetadataDao {
 	
 	public int bulkUpdate(List<? extends ResourceMetaData> meta);
 	
-	public List<? extends ResourceMetaData> list(String uri, int offset, int size);
+	public List<? extends ResourceMetaData> list(String uri, int offset, int size, String rel);
 	
 	public Long count(String uri);
 	

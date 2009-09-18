@@ -21,7 +21,7 @@ public class Member extends PersistentObject implements Principal, MailReceiver,
 	 */
 	private static final long serialVersionUID = -3483071076070600310L;
 	
-	protected static final String EMAIL_REG_EXP = "^[a-zA-Z0-9_!#\\$%&'\\*\\+/=\\?\\^`\\{\\|\\}~\\.\\-]{1,64}@\\w+[\\w\\.\\-]*?\\.[a-zA-Z]{1,4}$";
+	public static final String EMAIL_REG_EXP = "^[a-zA-Z0-9_!#\\$%&'\\*\\+/=\\?\\^`\\{\\|\\}~\\.\\-]{1,64}@\\w+[\\w\\.\\-]*?\\.[a-zA-Z]{1,4}$";
 
 	private static final ObjectMapper objMapper = new ObjectMapper();
 	

@@ -17,6 +17,8 @@ public interface ResourceService {
 
 	public List<? extends ResourceMetaData> list(Object entityId, int offset, int size) throws IOException;
 	
+	public List<? extends ResourceMetaData> list(Object entityId, int offset, int size, String rel) throws IOException;
+
 	public Long count(Object entityId);
 	
 	public void removeAll(Object entityId) throws IOException;

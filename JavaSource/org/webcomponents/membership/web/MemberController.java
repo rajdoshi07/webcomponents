@@ -8,9 +8,13 @@ import java.util.List;
 import javax.mail.internet.InternetAddress;
 
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.mail.javamail.InternetAddressEditor;
+import org.springframework.security.Authentication;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.support.StringMultipartFileEditor;
 import org.webcomponents.mail.TokenEmailSender;
+import org.webcomponents.membership.DuplicatedEmailException;
 import org.webcomponents.membership.Member;
 import org.webcomponents.membership.MemberNotFoundException;
 import org.webcomponents.membership.Membership;
@@ -36,6 +41,10 @@ public class MemberController {
 	private TokenEmailSender validationMailSender;
 
 	private String textFileCharset = "ISO-8859-1";
+	
+	private String editEmailSuccessView;
+	
+	private String validateEmailSuccessView;
 
 	@Required
 	public final void setMembership(Membership membership) {
@@ -50,9 +59,18 @@ public class MemberController {
 		this.textFileCharset = textFileCharset;
 	}
 	
+	public void setEditEmailSuccessView(String editMemberEmailSuccessView) {
+		this.editEmailSuccessView = editMemberEmailSuccessView;
+	}
+
+	public void setValidateEmailSuccessView(String validateEmailSuccessView) {
+		this.validateEmailSuccessView = validateEmailSuccessView;
+	}
+
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(String.class, new StringMultipartFileEditor(textFileCharset));
+		binder.registerCustomEditor(InternetAddress.class, new InternetAddressEditor());
 	}
 	
 	@RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
@@ -76,7 +94,7 @@ public class MemberController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void validateEmail(@RequestParam("code") String token) throws Exception {
+	public String validateEmail(@RequestParam("code") String token) throws Exception {
 		Token t = validationMailSender.getTokenService().getToken(token, validationMailSender.getKey());
 		String email = (String) t.getValue();
 		InternetAddress mail = new InternetAddress(email);
@@ -90,12 +108,31 @@ public class MemberController {
 		} catch (MemberNotFoundException e) {
 			throw new InvalidTokenException(t, e);
 		}
+		return this.validateEmailSuccessView;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	@ModelAttribute("profile")
-	public Member getMember(@RequestParam("username") Object username) throws IOException {
+	public Member getMember(@RequestParam(value="username", required=false) String username) throws IOException {
+		if(!StringUtils.hasText(username)) {
+			Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+			username = principal.getName();
+		}
 		return membership.getMember(username);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public String editEmail(@RequestParam(value="username", required=false) String username, @RequestParam(value="email")InternetAddress email, Errors errors) throws MemberNotFoundException, DuplicatedEmailException, IOException {
+		if(!StringUtils.hasText(username)) {
+			Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+			username = principal.getName();
+		}
+		String value = email.getAddress();
+		if(value == null || !value.matches(Member.EMAIL_REG_EXP)) {
+			errors.reject("email", "typeMismatch");
+		}
+		membership.editMemberEmail(username, email);
+		return this.editEmailSuccessView;
 	}
 
 	private void retry(String username) throws IOException, MemberNotFoundException {
@@ -105,7 +142,7 @@ public class MemberController {
 		}
 		validationMailSender.sendEmail(member);
 	}
-
+	
 	private String[] getKeys(String query) {
 		if(StringUtils.hasText(query)) {
 			String[] rv = StringUtils.tokenizeToStringArray(query, " \n");
@@ -113,5 +150,5 @@ public class MemberController {
 		}
 		return EMPTY_KEYS;
 	}
-
+	
 }

@@ -43,19 +43,20 @@ public class SqlMapResourceDao extends SqlMapClientDaoSupport implements Resourc
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<? extends ResourceMetaData> list(String uri, int offset, int size) {
+	public List<? extends ResourceMetaData> list(String uri, int offset, int size, String rel) {
 		Map<String, Object> model = new HashMap<String, Object>(3);
 		model.put("uri", uri);
 		model.put("offset", offset);
 		model.put("size", size);
+		model.put("rel", rel);
 		try {
-			List resources = getSqlMapClientTemplate().queryForList(getResourcesStatement, model);
+			List<? extends ResourceMetaData> resources = getSqlMapClientTemplate().queryForList(getResourcesStatement, model);
 			return resources;
 		} finally {
 			model.clear();
 		}
 	}
-	
+
 	@Override
 	public boolean remove(String uri) {
 		return getSqlMapClientTemplate().delete(deleteResourceStatement, uri) > 0;

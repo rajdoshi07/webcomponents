@@ -25,7 +25,7 @@
 		update users set status = #status#, updated_by = #updatedBy# where username = lower(#username#)
 	</update>
 	<update id="updateEmail">
-		update users set email = lower(#email#), email_status = 0, updated_by = #updatedBy# where username = lower(#username#)
+		update users set email = lower(#email#), status = 0, email_status = 0, updated_by = #updatedBy# where username = lower(#username#)
 	</update>
 	<update id="updateEmailStatus">
 		update users set email_status = #status#, status = 1, updated_by = #updatedBy# where email = lower(#email#) and status = 0

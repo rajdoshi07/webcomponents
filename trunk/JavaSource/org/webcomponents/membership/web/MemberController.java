@@ -14,7 +14,6 @@ import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.support.StringMultipartFileEditor;
 import org.webcomponents.mail.TokenEmailSender;
-import org.webcomponents.membership.DuplicatedEmailException;
 import org.webcomponents.membership.Member;
 import org.webcomponents.membership.MemberNotFoundException;
 import org.webcomponents.membership.Membership;
@@ -42,8 +40,6 @@ public class MemberController {
 
 	private String textFileCharset = "ISO-8859-1";
 	
-	private String editEmailSuccessView;
-	
 	private String validateEmailSuccessView;
 
 	@Required
@@ -59,10 +55,6 @@ public class MemberController {
 		this.textFileCharset = textFileCharset;
 	}
 	
-	public void setEditEmailSuccessView(String editMemberEmailSuccessView) {
-		this.editEmailSuccessView = editMemberEmailSuccessView;
-	}
-
 	public void setValidateEmailSuccessView(String validateEmailSuccessView) {
 		this.validateEmailSuccessView = validateEmailSuccessView;
 	}
@@ -119,20 +111,6 @@ public class MemberController {
 			username = principal.getName();
 		}
 		return membership.getMember(username);
-	}
-
-	@RequestMapping(method = RequestMethod.POST)
-	public String editEmail(@RequestParam(value="username", required=false) String username, @RequestParam(value="email")InternetAddress email, Errors errors) throws MemberNotFoundException, DuplicatedEmailException, IOException {
-		if(!StringUtils.hasText(username)) {
-			Authentication principal = SecurityContextHolder.getContext().getAuthentication();
-			username = principal.getName();
-		}
-		String value = email.getAddress();
-		if(value == null || !value.matches(Member.EMAIL_REG_EXP)) {
-			errors.reject("email", "typeMismatch");
-		}
-		membership.editMemberEmail(username, email);
-		return this.editEmailSuccessView;
 	}
 
 	private void retry(String username) throws IOException, MemberNotFoundException {

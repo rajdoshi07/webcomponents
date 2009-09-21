@@ -93,6 +93,9 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 	}
 
 	public Member editMemberEmail(Object username, InternetAddress email) throws MemberNotFoundException, DuplicatedEmailException {
+		if(!(email == null || email.getAddress().matches(Member.EMAIL_REG_EXP))) {
+			throw new IllegalArgumentException("Invalid internet address: " + email.toString());
+		}
 		try {
 			Principal principal = SecurityContextHolder.getContext().getAuthentication();
 			if (!personDao.updateEmail(username, email, principal)) {

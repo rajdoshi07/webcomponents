@@ -46,6 +46,10 @@ public class ContentRelatedRoleVoter implements AccessDecisionVoter {
 						if(service.isContentEditor(id, authentication)) {
 							return ACCESS_GRANTED;
 						}
+					} else if("VIEWER".equalsIgnoreCase(role)) {
+						if(service.isContentViewer(id, authentication)) {
+							return ACCESS_GRANTED;
+						}
 					}
 				}
 			}

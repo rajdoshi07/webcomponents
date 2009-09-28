@@ -1,6 +1,8 @@
 package org.webcomponents.membership.web;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
@@ -31,6 +33,11 @@ public class EditEmailController extends FormController {
 		String username = principal.getName();
 		Member member = this.membership.getMember(username);
 		return member.getEmail();
+	}
+
+	@RequestMapping(method=RequestMethod.GET)
+	public Map<String, Object> setupForm() {
+		return Collections.emptyMap();
 	}
 
 	@RequestMapping(method=RequestMethod.POST)

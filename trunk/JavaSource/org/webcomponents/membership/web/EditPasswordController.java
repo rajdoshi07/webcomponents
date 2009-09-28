@@ -1,6 +1,8 @@
 package org.webcomponents.membership.web;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.Authentication;
@@ -27,6 +29,11 @@ public class EditPasswordController extends FormController {
 		return new EditPasswordCommand();
 	}
 	
+	@RequestMapping(method=RequestMethod.GET)
+	public Map<String, Object> setupForm() {
+		return Collections.emptyMap();
+	}
+
 	@RequestMapping(method=RequestMethod.POST)
 	public String processSubmit(@ModelAttribute("command")EditPasswordCommand command, Errors errors) throws IOException {
 		validateCommand(command, errors);

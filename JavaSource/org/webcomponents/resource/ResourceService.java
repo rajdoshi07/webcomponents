@@ -7,14 +7,15 @@ import java.util.List;
 
 import org.springframework.security.annotation.Secured;
 import org.springframework.web.multipart.MultipartFile;
+import org.webcomponents.content.ContentNotFoundException;
 
 public interface ResourceService {
 	
 	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
-	public ResourceMetaData add(Object contentId, MultipartFile resource) throws IOException, ResourceException;
+	public ResourceMetaData add(Object contentId, MultipartFile resource) throws ContentNotFoundException, IOException, ResourceException;
 
 	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
-	public List<Object> add(Object contentId, MultipartFile[] resources);
+	public List<Object> add(Object contentId, MultipartFile[] resources) throws ContentNotFoundException;
 
 	@Secured({"ROLE_ADMIN","CONTENT_OWNER","CONTENT_VIEWER"})
 	public List<? extends ResourceMetaData> list(Object contentId, int offset, int size) throws IOException;

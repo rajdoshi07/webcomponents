@@ -8,9 +8,8 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.webcomponents.security.vote.ContentRelatedRoleService;
 
-public class ContentServiceImpl implements ContentService, ContentRelatedRoleService {
+public class ContentServiceImpl implements ContentService {
 
 	private ContentDao contentDao;
 

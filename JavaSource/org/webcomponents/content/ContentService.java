@@ -4,8 +4,9 @@ import java.io.Writer;
 import java.util.List;
 
 import org.springframework.security.annotation.Secured;
+import org.webcomponents.security.vote.ContentRelatedRoleService;
 
-public interface ContentService {
+public interface ContentService extends ContentRelatedRoleService {
 
 	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
 	public Content clone(String parentId) throws ContentNotFoundException;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.webcomponents.content.Content;
+import org.webcomponents.content.ContentNotFoundException;
 import org.webcomponents.content.ContentService;
 import org.webcomponents.resource.ResourceException;
 import org.webcomponents.resource.ResourceMetaData;
@@ -42,8 +43,8 @@ public class ResourceController {
 		
 		Content content = this.contentService.retrieveMetadata(id);
 		if(content != null) {
-			model.put("maxUploadCount", content.getMaxResourceCount());
-			model.put("minUploadCount", content.getMinResourceCount());
+			model.put("maxUploadCount", content.getMaxResourcesCount());
+			model.put("minUploadCount", content.getMinResourcesCount());
 		}
 		
 		model.put("maxUploadSize", maxUploadSize);
@@ -51,7 +52,7 @@ public class ResourceController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public void add(@RequestParam("id")String id, @RequestParam("file")MultipartFile file, HttpServletResponse response) throws IOException, ResourceException  {
+	public void add(@RequestParam("id")String id, @RequestParam("file")MultipartFile file, HttpServletResponse response) throws ContentNotFoundException, IOException, ResourceException  {
 		resourceService.add(id, file);
 		response.setStatus(HttpServletResponse.SC_ACCEPTED);
 	}

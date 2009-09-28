@@ -1,6 +1,8 @@
 package org.webcomponents.membership.web;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -37,6 +39,11 @@ public class SubscribeMemberController extends CaptchaFormController {
 		return rv;
 	}
 	
+	@RequestMapping(method=RequestMethod.GET)
+	public Map<String, Object> setupForm() {
+		return Collections.emptyMap();
+	}
+
 	@RequestMapping(method = RequestMethod.POST)
 	public String processSubmit(@ModelAttribute("subscription") SubscribeMemberCommand command, Errors errors, HttpSession session) throws IOException {
 		validateCaptcha(command, errors, session);

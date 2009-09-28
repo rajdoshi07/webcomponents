@@ -8,4 +8,6 @@ public interface ContentRelatedRoleService {
 	
 	boolean isContentEditor(Object id, Principal principal);
 
+	boolean isContentViewer(Object id, Principal principal);
+
 }

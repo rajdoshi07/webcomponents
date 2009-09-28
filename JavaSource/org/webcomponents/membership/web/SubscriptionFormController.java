@@ -1,5 +1,8 @@
 package org.webcomponents.membership.web;
 
+import java.util.Collections;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -27,6 +30,11 @@ public class SubscriptionFormController extends CaptchaFormController {
 		rv.setType(type);
 		rv.setStatus(MemberStatus.ACTIVE);
 		return rv;
+	}
+
+	@RequestMapping(method=RequestMethod.GET)
+	public Map<String, Object> setupForm() {
+		return Collections.emptyMap();
 	}
 
 	@RequestMapping(method = RequestMethod.POST)

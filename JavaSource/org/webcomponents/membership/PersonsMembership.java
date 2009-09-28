@@ -177,4 +177,9 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 		}
 		return username.equalsIgnoreCase(id.toString());
 	}
+
+	@Override
+	public boolean isContentViewer(Object id, Principal principal) {
+		return false;
+	}
 }

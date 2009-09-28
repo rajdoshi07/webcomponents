@@ -8,27 +8,33 @@ import java.util.List;
 import org.springframework.security.annotation.Secured;
 import org.springframework.web.multipart.MultipartFile;
 
-@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
 public interface ResourceService {
 	
-	public ResourceMetaData add(Object entityId, MultipartFile resource) throws IOException, ResourceException;
+	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
+	public ResourceMetaData add(Object contentId, MultipartFile resource) throws IOException, ResourceException;
 
-	public List<Object> add(Object entityId, MultipartFile[] resources);
+	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
+	public List<Object> add(Object contentId, MultipartFile[] resources);
 
-	public List<? extends ResourceMetaData> list(Object entityId, int offset, int size) throws IOException;
+	@Secured({"ROLE_ADMIN","CONTENT_OWNER","CONTENT_VIEWER"})
+	public List<? extends ResourceMetaData> list(Object contentId, int offset, int size) throws IOException;
 	
-	public List<? extends ResourceMetaData> list(Object entityId, int offset, int size, String rel) throws IOException;
+	@Secured({"ROLE_ADMIN","CONTENT_OWNER","CONTENT_VIEWER"})
+	public List<? extends ResourceMetaData> list(Object contentId, int offset, int size, String rel) throws IOException;
 
-	public Long count(Object entityId);
+	@Secured({"ROLE_ADMIN","CONTENT_OWNER","CONTENT_VIEWER"})
+	public Long count(Object contentId);
 	
-	public void removeAll(Object entityId) throws IOException;
+	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
+	public void removeAll(Object contentId) throws IOException;
 	
-	public int getMaxResources(Object entityId);
-	
+	@Secured({"ROLE_ADMIN","CONTENT_OWNER","CONTENT_VIEWER"})
 	public URI getAccessUri(URI resource) throws IOException;
 	
+	@Secured({"ROLE_ADMIN","CONTENT_OWNER","CONTENT_VIEWER"})
 	public void export(URI resource, OutputStream out) throws IOException;
 
+	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
 	public void remove(URI resource) throws IOException;
 
 }

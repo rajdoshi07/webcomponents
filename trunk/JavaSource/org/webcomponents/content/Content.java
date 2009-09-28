@@ -17,8 +17,8 @@ public class Content extends PersistentObject {
 	private String acl;
 	private String parentId;
 	private List<Content> relatedContent;
-	private Integer minResourceCount;
-	private Integer maxResourceCount;
+	private Integer minResourcesCount;
+	private Integer maxResourcesCount;
 	
 	
 	public static final int STATUS_WIP = 0;
@@ -84,20 +84,20 @@ public class Content extends PersistentObject {
 		relatedContent.add(content);
 	}
 
-	public Integer getMinResourceCount() {
-		return minResourceCount;
+	public Integer getMinResourcesCount() {
+		return minResourcesCount;
 	}
 
-	public void setMinResourceCount(Integer minResourceCount) {
-		this.minResourceCount = minResourceCount;
+	public void setMinResourcesCount(Integer minResourceCount) {
+		this.minResourcesCount = minResourceCount;
 	}
 
-	public Integer getMaxResourceCount() {
-		return maxResourceCount;
+	public Integer getMaxResourcesCount() {
+		return maxResourcesCount;
 	}
 
-	public void setMaxResourceCount(Integer maxResourceCount) {
-		this.maxResourceCount = maxResourceCount;
+	public void setMaxResourcesCount(Integer maxResourceCount) {
+		this.maxResourcesCount = maxResourceCount;
 	}
 
 }

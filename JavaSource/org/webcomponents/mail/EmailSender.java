@@ -11,6 +11,7 @@ import javax.mail.internet.InternetAddress;
 import org.apache.log4j.Logger;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.util.ObjectUtils;
 
 public abstract class EmailSender {
 
@@ -37,12 +38,12 @@ public abstract class EmailSender {
 		}
 		MailContentTemplate template = getTemplate(obj);
 		if(template == null) {
-			logger.warn("No template found to send object " + obj.toString());
+			logger.warn("No template found to send object " + ObjectUtils.nullSafeToString(obj));
 			return;
 		}
 		InternetAddress receiver = getReceiver(obj);
 		if(receiver == null) {
-			logger.warn("No receiver found to send object " + obj.toString());
+			logger.warn("No receiver found to send object " + ObjectUtils.nullSafeToString(obj));
 			return;
 		}
 		MimeMessagePreparator preparator = template.createMimeMessagePreparator(model, receiver);

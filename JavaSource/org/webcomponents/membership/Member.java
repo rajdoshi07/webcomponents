@@ -1,13 +1,9 @@
 package org.webcomponents.membership;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.security.Principal;
 
 import javax.mail.internet.InternetAddress;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.util.StringUtils;
 import org.webcomponents.content.PersistentObject;
 import org.webcomponents.mail.MailReceiver;
@@ -23,8 +19,6 @@ public class Member extends PersistentObject implements Principal, MailReceiver,
 	
 	public static final String EMAIL_REG_EXP = "^[a-zA-Z0-9_!#\\$%&'\\*\\+/=\\?\\^`\\{\\|\\}~\\.\\-]{1,64}@\\w+[\\w\\.\\-]*?\\.[a-zA-Z]{1,4}$";
 
-	private static final ObjectMapper objMapper = new ObjectMapper();
-	
 	private MemberStatus status;
 
 	protected String screenName;
@@ -126,22 +120,6 @@ public class Member extends PersistentObject implements Principal, MailReceiver,
 			return member.getUsername().equals(getUsername());
 		}
 		return false;
-	}
-
-	public String toString() {
-		Writer out = new StringWriter();
-		try {
-			objMapper.writeValue(out, this);
-			return out.toString();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			try {
-				out.close();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
 	}
 
 	public void setId(String id) {

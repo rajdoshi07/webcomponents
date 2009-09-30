@@ -7,28 +7,20 @@ import org.webcomponents.content.PersistentObject;
 
 public class Content extends PersistentObject {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8176732136338806784L;
-	private String title;
 	private int status = STATUS_WIP;
 	private int type;
+	private String title;
 	private String acl;
 	private String parentId;
-	private List<Content> relatedContent;
 	private Integer minResourcesCount;
 	private Integer maxResourcesCount;
-	
+	private List<Content> relatedContent;
 	
 	public static final int STATUS_WIP = 0;
 	public static final int STATUS_PUBLISHED = 1;
 	public static final int STATUS_UNPUBLISHED = 2;
 
-	/**
-	 * exposed as property <code>parentId : String</code>
-	 * @return
-	 */
 	public String getParentId() {
 		return parentId;
 	}

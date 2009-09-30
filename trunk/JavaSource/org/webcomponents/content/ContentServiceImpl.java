@@ -45,8 +45,10 @@ public class ContentServiceImpl implements ContentService {
 			id = this.contentDao.insert(publishing);
 		}
 		this.contentDao.removeRelatedContent(id);
-		for(Content related: publishing.getRelatedContent()) {
-			this.contentDao.addRelatedContent(publishing.getId(), related.getId());
+		if(publishing.getRelatedContent() != null) {
+			for(Content related: publishing.getRelatedContent()) {
+				this.contentDao.addRelatedContent(publishing.getId(), related.getId());
+			}
 		}
 		Content rv = retrieve(id);
 		return rv;

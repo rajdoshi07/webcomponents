@@ -15,6 +15,7 @@ public class Content extends PersistentObject {
 	private String parentId;
 	private Integer minResourcesCount;
 	private Integer maxResourcesCount;
+	private List<? extends ResourceMetaData> resourcesMetadata;
 	private List<Content> relatedContent;
 	
 	public static final int STATUS_WIP = 0;
@@ -90,6 +91,15 @@ public class Content extends PersistentObject {
 
 	public void setMaxResourcesCount(Integer maxResourceCount) {
 		this.maxResourcesCount = maxResourceCount;
+	}
+
+	public List<? extends ResourceMetaData> getResourcesMetadata() {
+		return resourcesMetadata;
+	}
+
+	public void setResourcesMetadata(
+			List<? extends ResourceMetaData> resourcesMetadata) {
+		this.resourcesMetadata = resourcesMetadata;
 	}
 
 }

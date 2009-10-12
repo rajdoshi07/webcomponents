@@ -1,6 +1,7 @@
-package org.webcomponents.resource.web;
+package org.webcomponents.content.web;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -16,9 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.webcomponents.content.Content;
 import org.webcomponents.content.ContentNotFoundException;
 import org.webcomponents.content.ContentService;
-import org.webcomponents.resource.ResourceException;
-import org.webcomponents.resource.ResourceMetaData;
-import org.webcomponents.resource.ResourceService;
+import org.webcomponents.content.ResourceException;
+import org.webcomponents.content.ResourceMetaData;
+import org.webcomponents.content.ResourceService;
 
 @Controller
 public class ResourceController {
@@ -32,8 +33,8 @@ public class ResourceController {
 	public Map<String, Object> list(@RequestParam("id")String id, @RequestParam(value="offset", required=false)Integer offset, @RequestParam(value="size", required=false)Integer size) throws IOException {
 		int o = offset == null || offset < 0 ? 0 : offset;
 		int s = size == null || size < 0 ? pageSize : size;
-		List<? extends ResourceMetaData> resources = resourceService.list(id, o, s);
-		Long count = resourceService.count(id);
+		List<? extends ResourceMetaData> resources = resourceService.listResourcesMetadata(id, o, s);
+		Long count = resourceService.countResources(id);
 		
 		Map<String, Object> model = new HashMap<String, Object>(3);
 		model.put("resources", resources);
@@ -43,8 +44,7 @@ public class ResourceController {
 		
 		Content content = this.contentService.retrieveMetadata(id);
 		if(content != null) {
-			model.put("maxUploadCount", content.getMaxResourcesCount());
-			model.put("minUploadCount", content.getMinResourcesCount());
+			model.put("content", content);
 		}
 		
 		model.put("maxUploadSize", maxUploadSize);
@@ -53,14 +53,22 @@ public class ResourceController {
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public void add(@RequestParam("id")String id, @RequestParam("file")MultipartFile file, HttpServletResponse response) throws ContentNotFoundException, IOException, ResourceException  {
-		resourceService.add(id, file);
+		resourceService.addResource(id, file);
 		response.setStatus(HttpServletResponse.SC_ACCEPTED);
+		// Mac bug
+		PrintWriter out = response.getWriter();
+		out.print("ok");
+		out.flush();
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public void remove(@RequestParam("resource")String resource, HttpServletResponse response) throws IOException {
-		this.resourceService.remove(URI.create(resource));
+		this.resourceService.removeResource(URI.create(resource));
 		response.setStatus(HttpServletResponse.SC_OK);
+		// Mac bug
+		PrintWriter out = response.getWriter();
+		out.print("ok");
+		out.flush();
 	}
 		
 	public void setMaxUploadSize(long maxUploadSize) {

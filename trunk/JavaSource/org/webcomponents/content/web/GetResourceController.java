@@ -1,4 +1,4 @@
-package org.webcomponents.resource.web;
+package org.webcomponents.content.web;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.ServletContextAware;
-import org.webcomponents.resource.ResourceService;
+import org.webcomponents.content.ResourceService;
 
 public class GetResourceController implements ServletContextAware {
 
@@ -42,14 +42,14 @@ public class GetResourceController implements ServletContextAware {
 		String path = request.getRequestURI();
 		if(path != null) {
 			URI uri = URI.create(path.substring(offset));
-			URI url = resourceService.getAccessUri(uri);
+			URI url = resourceService.getResourceAccessUri(uri);
 			if(url.isAbsolute()) {
 				logger.debug("Redirecting request path: " + path + " to " + url.toString());
 				response.sendRedirect(url.toString());
 			} else {
 				OutputStream out = response.getOutputStream();
 				try {
-					resourceService.export(uri, out);
+					resourceService.exportResource(uri, out);
 				} finally {
 					out.flush();
 				}

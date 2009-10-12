@@ -3,6 +3,8 @@ package org.webcomponents.content;
 import java.security.Principal;
 import java.util.List;
 
+import org.springframework.security.GrantedAuthority;
+
 
 public interface ContentDao {
 
@@ -24,10 +26,17 @@ public interface ContentDao {
 	
 	void removeRelatedContent(String id);
 
-	boolean isContentOwner(String id, Principal principal);
+	boolean isOwner(String id, Principal principal);
 	
-	boolean isContentViewer(String id, Principal principal);
+	boolean isViewer(String id, Principal principal);
 
-	boolean isContentEditor(String id, Principal principal);
+	boolean isEditor(String id, Principal principal);
+	
+	public List<GrantedAuthority> getAuthorities(String id);
+	
+	public int resetAuthorities(String id);
+	
+	public void putAuthority(String id, GrantedAuthority authority);
+
 
 }

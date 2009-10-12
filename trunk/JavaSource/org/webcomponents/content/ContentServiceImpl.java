@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 
@@ -114,12 +115,12 @@ public class ContentServiceImpl implements ContentService {
 		if(obj instanceof Content) {
 			Content content = (Content) obj;
 			if(StringUtils.hasText(content.getId())) {
-				boolean rv = contentDao.isContentEditor(content.getId(), principal);
+				boolean rv = contentDao.isEditor(content.getId(), principal);
 				return rv;
 			}
 			return true;
 		}
-		return contentDao.isContentEditor(obj.toString(), principal);
+		return contentDao.isEditor(obj.toString(), principal);
 	}
 
 	@Override
@@ -133,12 +134,12 @@ public class ContentServiceImpl implements ContentService {
 		if(obj instanceof Content) {
 			Content content = (Content) obj;
 			if(StringUtils.hasText(content.getId())) {
-				boolean rv = contentDao.isContentOwner(content.getId(), principal);
+				boolean rv = contentDao.isOwner(content.getId(), principal);
 				return rv;
 			}
 			return true;
 		}
-		return contentDao.isContentOwner(obj.toString(), principal);
+		return contentDao.isOwner(obj.toString(), principal);
 	}
 
 	@Override
@@ -152,12 +153,28 @@ public class ContentServiceImpl implements ContentService {
 		if(obj instanceof Content) {
 			Content content = (Content) obj;
 			if(StringUtils.hasText(content.getId())) {
-				boolean rv = contentDao.isContentViewer(content.getId(), principal);
+				boolean rv = contentDao.isViewer(content.getId(), principal);
 				return rv;
 			}
 			return true;
 		}
-		return contentDao.isContentViewer(obj.toString(), principal);
+		return contentDao.isViewer(obj.toString(), principal);
+	}
+
+	@Override
+	public void putAuthorities(String id, List<GrantedAuthority> authorities) {
+		this.contentDao.resetAuthorities(id);
+		if(authorities == null) {
+			return;
+		}
+		for(GrantedAuthority authority: authorities) {
+			this.contentDao.putAuthority(id, authority);
+		}
+	}
+
+	@Override
+	public List<GrantedAuthority> listAuthorities(String id) {
+		return this.contentDao.getAuthorities(id);
 	}
 
 	protected ContentDao getContentDao() {

@@ -3,6 +3,7 @@ package org.webcomponents.content;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.GrantedAuthority;
 import org.webcomponents.content.PersistentObject;
 
 public class Content extends PersistentObject {
@@ -11,13 +12,14 @@ public class Content extends PersistentObject {
 	private int status = STATUS_WIP;
 	private int type;
 	private String title;
-	private String acl;
 	private String parentId;
 	private Integer minResourcesCount;
 	private Integer maxResourcesCount;
 	private List<? extends ResourceMetaData> resourcesMetadata;
 	private List<Content> relatedContent;
 	
+	private List<GrantedAuthority> acl;
+
 	public static final int STATUS_WIP = 0;
 	public static final int STATUS_PUBLISHED = 1;
 	public static final int STATUS_UNPUBLISHED = 2;
@@ -46,11 +48,11 @@ public class Content extends PersistentObject {
 		this.title = title;
 	}
 
-	public String getAcl() {
+	public List<GrantedAuthority> getAcl() {
 		return acl;
 	}
 
-	public void setAcl(String acl) {
+	public void setAcl(List<GrantedAuthority> acl) {
 		this.acl = acl;
 	}
 

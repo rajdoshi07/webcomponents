@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
+import org.springframework.security.GrantedAuthority;
 import org.springframework.stereotype.Repository;
 import org.webcomponents.content.Content;
 import org.webcomponents.content.ContentDao;
@@ -25,6 +26,9 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	private String isEditorStatement = "isEditor";
 	private String isViewerStatement = "isViewer";
 	private String getContentMetadataStatement = "getContentMetadata";
+	private String getContentAuthoritiesStatement = "getContentAuthorities";
+	private String putContentAuthorityStatement = "putContentAuthority";
+	private String resetContentAuthoritiesStatement = "resetContentAuthorities";
 
 	@Override
 	public String insert(Content content) {
@@ -84,7 +88,7 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	}
 
 	@Override
-	public boolean isContentOwner(String id, Principal principal) {
+	public boolean isOwner(String id, Principal principal) {
 		Map<String, Object> model = new HashMap<String, Object>(2);
 		try {
 			model.put("id", id);
@@ -96,7 +100,7 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	}
 
 	@Override
-	public boolean isContentEditor(String id, Principal principal) {
+	public boolean isEditor(String id, Principal principal) {
 		Map<String, Object> model = new HashMap<String, Object>(2);
 		try {
 			model.put("id", id);
@@ -108,7 +112,7 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	}
 
 	@Override
-	public boolean isContentViewer(String id, Principal principal) {
+	public boolean isViewer(String id, Principal principal) {
 		Map<String, Object> model = new HashMap<String, Object>(2);
 		try {
 			model.put("id", id);
@@ -122,6 +126,29 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	@Override
 	public void removeRelatedContent(String id) {
 		getSqlMapClientTemplate().delete(removeRelatedContentsStatement , id);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GrantedAuthority> getAuthorities(String id) {
+		return getSqlMapClientTemplate().queryForList(this.getContentAuthoritiesStatement , id);
+	}
+
+	@Override
+	public void putAuthority(String id, GrantedAuthority authority) {
+		Map<String, Object> model = new HashMap<String, Object>(2);
+		try {
+			model.put("id", id);
+			model.put("authority", authority.getAuthority());
+			getSqlMapClientTemplate().insert(this.putContentAuthorityStatement , model);
+		} finally {
+			model.clear();
+		}
+	}
+
+	@Override
+	public int resetAuthorities(String id) {
+		return getSqlMapClientTemplate().delete(this.resetContentAuthoritiesStatement , id);
 	}
 
 	public String getInsertContentStatement() {
@@ -218,6 +245,20 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 
 	public void setGetContentMetadataStatement(String getContentMetadataStatement) {
 		this.getContentMetadataStatement = getContentMetadataStatement;
+	}
+
+	public void setGetContentAuthoritiesStatement(
+			String getContentAuthoritiesStatement) {
+		this.getContentAuthoritiesStatement = getContentAuthoritiesStatement;
+	}
+
+	public void setPutContentAuthorityStatement(String putContentAuthorityStatement) {
+		this.putContentAuthorityStatement = putContentAuthorityStatement;
+	}
+
+	public void setResetContentAuthoritiesStatement(
+			String resetContentAuthoritiesStatement) {
+		this.resetContentAuthoritiesStatement = resetContentAuthoritiesStatement;
 	}
 
 }

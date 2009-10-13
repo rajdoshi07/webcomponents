@@ -1,5 +1,6 @@
 package org.webcomponents.content;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public interface ContentService extends ContentRelatedRoleService {
 	public List<Content> listVisibleContentMetadata(List<GrantedAuthority> authority);
 
 	@Secured("ROLE_ADMIN")
-	public void export(String id, Writer out) throws ContentNotFoundException;
+	public void export(String id, Writer out) throws ContentNotFoundException, IOException;
 	
 	@Secured("ROLE_ADMIN")
 	public void putAuthorities(String id, List<GrantedAuthority> authorities);

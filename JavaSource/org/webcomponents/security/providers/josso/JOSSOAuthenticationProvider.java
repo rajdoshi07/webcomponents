@@ -1,6 +1,8 @@
 package org.webcomponents.security.providers.josso;
 
 import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.josso.gateway.GatewayServiceLocator;
@@ -61,16 +63,18 @@ public class JOSSOAuthenticationProvider implements AuthenticationProvider {
 
 	protected UserDetails retrieveUser(String jossoSessionId, String username, JOSSOAuthenticationToken authentication) throws NoSuchUserException, SSOIdentityException {
 		SSORole[] roles = im.findRolesBySSOSessionId(jossoSessionId);
-		GrantedAuthority[] authorities = null;
+		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
 		if(roles != null) {
-			authorities = new GrantedAuthorityImpl[roles.length];
 			for(int i = 0; i < roles.length; i++) {
-				authorities[i] = new GrantedAuthorityImpl("ROLE_" + roles[i].getName().toUpperCase());
+				authorities.add(new GrantedAuthorityImpl("ROLE_" + roles[i].getName().toUpperCase()));
 			}
-		} else {
-			authorities = new GrantedAuthority[0];
 		}
-		User rv = new User(username, "", true, true, true, true, authorities);
+		if(authentication.getAuthorities().length > 0) {
+			for(int i = 0; i < authentication.getAuthorities().length; i++) {
+				authorities.add(authentication.getAuthorities()[i]);
+			}
+		}
+		User rv = new User(username, "", true, true, true, true, authorities.toArray(new GrantedAuthority[0]));
 		return rv;
 	}
 

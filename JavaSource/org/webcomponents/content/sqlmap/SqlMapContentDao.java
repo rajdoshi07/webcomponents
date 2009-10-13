@@ -1,5 +1,7 @@
 package org.webcomponents.content.sqlmap;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	private String putContentAuthorityStatement = "putContentAuthority";
 	private String resetContentAuthoritiesStatement = "resetContentAuthorities";
 	private String getContentByAuthoritiesStatement = "getContentsByAuthorities";
+	private String getContentExportStatement = "getContentExport";
 
 	@Override
 	public String insert(Content content) {
@@ -152,6 +155,18 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 		return getSqlMapClientTemplate().delete(this.resetContentAuthoritiesStatement , id);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Content> listMetadata(List<GrantedAuthority> authority) {
+		return getSqlMapClientTemplate().queryForList(this.getContentByAuthoritiesStatement, authority);
+	}
+
+	@Override
+	public void export(String id, Writer out) throws IOException {
+		Object content = getSqlMapClientTemplate().queryForObject(this.getContentExportStatement, id);
+		out.write(content.toString());
+	}
+	
 	public String getInsertContentStatement() {
 		return insertContentStatement;
 	}
@@ -262,15 +277,13 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 		this.resetContentAuthoritiesStatement = resetContentAuthoritiesStatement;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Content> listMetadata(List<GrantedAuthority> authority) {
-		return getSqlMapClientTemplate().queryForList(this.getContentByAuthoritiesStatement, authority);
-	}
-
 	public void setGetContentByAuthoritiesStatement(
 			String getContentByAuthorityStatement) {
 		this.getContentByAuthoritiesStatement = getContentByAuthorityStatement;
 	}
 
+	public void setGetContentExportStatement(String getContentExportStatement) {
+		this.getContentExportStatement = getContentExportStatement;
+	}
+	
 }

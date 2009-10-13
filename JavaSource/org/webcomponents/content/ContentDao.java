@@ -20,6 +20,8 @@ public interface ContentDao {
 
 	List<Content> listMetadata(String username);
 
+	List<Content> listMetadata(List<GrantedAuthority> authority);
+	
 	boolean remove(String id);
 	
 	void addRelatedContent(String id, String relatedId);
@@ -32,11 +34,10 @@ public interface ContentDao {
 
 	boolean isEditor(String id, Principal principal);
 	
-	public List<GrantedAuthority> getAuthorities(String id);
+	List<GrantedAuthority> getAuthorities(String id);
 	
-	public int resetAuthorities(String id);
+	int resetAuthorities(String id);
 	
-	public void putAuthority(String id, GrantedAuthority authority);
-
+	void putAuthority(String id, GrantedAuthority authority);
 
 }

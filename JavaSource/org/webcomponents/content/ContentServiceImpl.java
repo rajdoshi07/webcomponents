@@ -2,12 +2,15 @@ package org.webcomponents.content;
 
 import java.io.Writer;
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 public class ContentServiceImpl implements ContentService {
@@ -62,7 +65,7 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public List<Content> listMetadata(String username) {
+	public List<Content> listOwnedContentMetadata(String username) {
 		return contentDao.listMetadata(username);
 	}
 
@@ -179,6 +182,29 @@ public class ContentServiceImpl implements ContentService {
 
 	protected ContentDao getContentDao() {
 		return contentDao;
+	}
+
+	@Override
+	public List<Content> listOwnedContentMetadata() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return contentDao.listMetadata(authentication.getName());
+	}
+
+	@Override
+	public List<Content> listVisibleContentMetadata() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if(!authentication.isAuthenticated() || authentication.getAuthorities() == null) {
+			return Collections.emptyList();
+		}
+		return this.contentDao.listMetadata(Arrays.asList(authentication.getAuthorities()));
+	}
+
+	@Override
+	public List<Content> listVisibleContentMetadata(List<GrantedAuthority> authority) {
+		if(CollectionUtils.isEmpty(authority)) {
+			return Collections.emptyList();
+		}
+		return this.contentDao.listMetadata(authority);
 	}
 
 }

@@ -29,6 +29,7 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	private String getContentAuthoritiesStatement = "getContentAuthorities";
 	private String putContentAuthorityStatement = "putContentAuthority";
 	private String resetContentAuthoritiesStatement = "resetContentAuthorities";
+	private String getContentByAuthoritiesStatement = "getContentsByAuthorities";
 
 	@Override
 	public String insert(Content content) {
@@ -259,6 +260,17 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	public void setResetContentAuthoritiesStatement(
 			String resetContentAuthoritiesStatement) {
 		this.resetContentAuthoritiesStatement = resetContentAuthoritiesStatement;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Content> listMetadata(List<GrantedAuthority> authority) {
+		return getSqlMapClientTemplate().queryForList(this.getContentByAuthoritiesStatement, authority);
+	}
+
+	public void setGetContentByAuthoritiesStatement(
+			String getContentByAuthorityStatement) {
+		this.getContentByAuthoritiesStatement = getContentByAuthorityStatement;
 	}
 
 }

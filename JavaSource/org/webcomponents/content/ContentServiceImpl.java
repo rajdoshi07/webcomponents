@@ -1,5 +1,6 @@
 package org.webcomponents.content;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.security.Principal;
 import java.util.Arrays;
@@ -59,9 +60,8 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public void export(String id, Writer out) throws ContentNotFoundException {
-		// TODO Auto-generated method stub
-
+	public void export(String id, Writer out) throws ContentNotFoundException, IOException {
+		this.contentDao.export(id, out);
 	}
 
 	@Override

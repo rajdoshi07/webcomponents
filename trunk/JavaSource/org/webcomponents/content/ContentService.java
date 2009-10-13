@@ -27,7 +27,15 @@ public interface ContentService extends ContentRelatedRoleService {
 	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
 	public void publish(String id) throws ContentNotFoundException;
 	
-	public List<Content> listMetadata(String username);
+	public List<Content> listOwnedContentMetadata();
+	
+	public List<Content> listVisibleContentMetadata();
+
+	@Secured("ROLE_ADMIN")
+	public List<Content> listOwnedContentMetadata(String username);
+	
+	@Secured("ROLE_ADMIN")
+	public List<Content> listVisibleContentMetadata(List<GrantedAuthority> authority);
 
 	@Secured("ROLE_ADMIN")
 	public void export(String id, Writer out) throws ContentNotFoundException;

@@ -164,7 +164,9 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	@Override
 	public void export(String id, Writer out) throws IOException {
 		Object content = getSqlMapClientTemplate().queryForObject(this.getContentExportStatement, id);
-		out.write(content.toString());
+		if(content != null) {
+			out.write(content.toString());
+		}
 	}
 	
 	public String getInsertContentStatement() {

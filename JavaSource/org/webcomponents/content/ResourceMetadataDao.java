@@ -4,7 +4,9 @@ import java.util.List;
 
 public interface ResourceMetadataDao {
 	
-	public void edit(ResourceMetaData meta);
+	public void insert(ResourceMetaData meta);
+	
+	public boolean update(ResourceMetaData meta);
 	
 	public int bulkUpdate(List<? extends ResourceMetaData> meta);
 	

@@ -97,7 +97,7 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 		Map<String, Object> model = new HashMap<String, Object>(2);
 		try {
 			model.put("id", id);
-			model.put("principal", authentication);
+			model.put("authentication", authentication);
 			return (Boolean) getSqlMapClientTemplate().queryForObject(isOwnerStatement, model);
 		} finally {
 			model.clear();
@@ -109,7 +109,7 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 		Map<String, Object> model = new HashMap<String, Object>(2);
 		try {
 			model.put("id", id);
-			model.put("principal", authentication);
+			model.put("authentication", authentication);
 			return (Boolean) getSqlMapClientTemplate().queryForObject(isEditorStatement, model);
 		} finally {
 			model.clear();
@@ -121,7 +121,7 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 		Map<String, Object> model = new HashMap<String, Object>(2);
 		try {
 			model.put("id", id);
-			model.put("principal", authentication);
+			model.put("authentication", authentication);
 			return (Boolean) getSqlMapClientTemplate().queryForObject(isViewerStatement, model);
 		} finally {
 			model.clear();

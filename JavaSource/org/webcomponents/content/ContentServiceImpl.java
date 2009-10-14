@@ -2,7 +2,6 @@ package org.webcomponents.content;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -108,60 +107,60 @@ public class ContentServiceImpl implements ContentService {
 	}
 	
 	@Override
-	public boolean isContentEditor(Object obj, Principal principal) {
+	public boolean isContentEditor(Object obj, Authentication authentication) {
 		if(obj == null) {
 			return true;
 		}
-		if(principal == null) {
+		if(authentication == null) {
 			return false;
 		}
 		if(obj instanceof Content) {
 			Content content = (Content) obj;
 			if(StringUtils.hasText(content.getId())) {
-				boolean rv = contentDao.isEditor(content.getId(), principal);
+				boolean rv = contentDao.isEditor(content.getId(), authentication);
 				return rv;
 			}
 			return true;
 		}
-		return contentDao.isEditor(obj.toString(), principal);
+		return contentDao.isEditor(obj.toString(), authentication);
 	}
 
 	@Override
-	public boolean isContentOwner(Object obj, Principal principal) {
+	public boolean isContentOwner(Object obj, Authentication authentication) {
 		if(obj == null) {
 			return true;
 		}
-		if(principal == null) {
+		if(authentication == null) {
 			return false;
 		}
 		if(obj instanceof Content) {
 			Content content = (Content) obj;
 			if(StringUtils.hasText(content.getId())) {
-				boolean rv = contentDao.isOwner(content.getId(), principal);
+				boolean rv = contentDao.isOwner(content.getId(), authentication);
 				return rv;
 			}
 			return true;
 		}
-		return contentDao.isOwner(obj.toString(), principal);
+		return contentDao.isOwner(obj.toString(), authentication);
 	}
 
 	@Override
-	public boolean isContentViewer(Object obj, Principal principal) {
+	public boolean isContentViewer(Object obj, Authentication authentication) {
 		if(obj == null) {
 			return true;
 		}
-		if(principal == null) {
+		if(authentication == null) {
 			return false;
 		}
 		if(obj instanceof Content) {
 			Content content = (Content) obj;
 			if(StringUtils.hasText(content.getId())) {
-				boolean rv = contentDao.isViewer(content.getId(), principal);
+				boolean rv = contentDao.isViewer(content.getId(), authentication);
 				return rv;
 			}
 			return true;
 		}
-		return contentDao.isViewer(obj.toString(), principal);
+		return contentDao.isViewer(obj.toString(), authentication);
 	}
 
 	@Override

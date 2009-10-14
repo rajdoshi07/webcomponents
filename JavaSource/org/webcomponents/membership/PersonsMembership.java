@@ -9,6 +9,7 @@ import java.util.List;
 import javax.mail.internet.InternetAddress;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -157,13 +158,13 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 	}
 
 	@Override
-	public boolean isContentEditor(Object id, Principal principal) {
+	public boolean isContentEditor(Object id, Authentication authentication) {
 		return false;
 	}
 
 	@Override
-	public boolean isContentOwner(Object id, Principal principal) {
-		String username = principal.getName();
+	public boolean isContentOwner(Object id, Authentication authentication) {
+		String username = authentication.getName();
 		if(id instanceof InternetAddress) {
 			if(username.indexOf('@') < 0) {
 				Member member = getMember(username);
@@ -179,7 +180,7 @@ public class PersonsMembership implements Membership, ContentRelatedRoleService 
 	}
 
 	@Override
-	public boolean isContentViewer(Object id, Principal principal) {
+	public boolean isContentViewer(Object id, Authentication authentication) {
 		return false;
 	}
 }

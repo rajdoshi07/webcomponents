@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
+import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.stereotype.Repository;
 import org.webcomponents.content.Content;
@@ -92,11 +93,11 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	}
 
 	@Override
-	public boolean isOwner(String id, Principal principal) {
+	public boolean isOwner(String id, Authentication authentication) {
 		Map<String, Object> model = new HashMap<String, Object>(2);
 		try {
 			model.put("id", id);
-			model.put("principal", principal);
+			model.put("principal", authentication);
 			return (Boolean) getSqlMapClientTemplate().queryForObject(isOwnerStatement, model);
 		} finally {
 			model.clear();
@@ -104,11 +105,11 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	}
 
 	@Override
-	public boolean isEditor(String id, Principal principal) {
+	public boolean isEditor(String id, Authentication authentication) {
 		Map<String, Object> model = new HashMap<String, Object>(2);
 		try {
 			model.put("id", id);
-			model.put("principal", principal);
+			model.put("principal", authentication);
 			return (Boolean) getSqlMapClientTemplate().queryForObject(isEditorStatement, model);
 		} finally {
 			model.clear();
@@ -116,11 +117,11 @@ public class SqlMapContentDao extends SqlMapClientDaoSupport implements ContentD
 	}
 
 	@Override
-	public boolean isViewer(String id, Principal principal) {
+	public boolean isViewer(String id, Authentication authentication) {
 		Map<String, Object> model = new HashMap<String, Object>(2);
 		try {
 			model.put("id", id);
-			model.put("principal", principal);
+			model.put("principal", authentication);
 			return (Boolean) getSqlMapClientTemplate().queryForObject(isViewerStatement, model);
 		} finally {
 			model.clear();

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ibatis.support.SqlMapClientDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.webcomponents.content.ResourceMetaData;
@@ -22,14 +21,13 @@ public class SqlMapResourceDao extends SqlMapClientDaoSupport implements Resourc
 	private String updateMetadataStatement = "updateMetadata";
 
 	@Override
-	public void edit(ResourceMetaData meta) {
-		try {
-			getSqlMapClientTemplate().insert(insertResourceStatement, meta);
-		} catch (DataIntegrityViolationException e) {
-			if(getSqlMapClientTemplate().update(updateResourceStatement, meta) == 0) {
-				throw e;
-			}
-		}
+	public void insert(ResourceMetaData meta) {
+		getSqlMapClientTemplate().insert(insertResourceStatement, meta);
+	}
+
+	@Override
+	public boolean update(ResourceMetaData meta) {
+		return getSqlMapClientTemplate().update(updateResourceStatement, meta) == 0;
 	}
 
 	@Override

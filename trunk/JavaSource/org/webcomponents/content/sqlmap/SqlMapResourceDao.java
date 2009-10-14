@@ -27,7 +27,7 @@ public class SqlMapResourceDao extends SqlMapClientDaoSupport implements Resourc
 
 	@Override
 	public boolean update(ResourceMetaData meta) {
-		return getSqlMapClientTemplate().update(updateResourceStatement, meta) == 0;
+		return getSqlMapClientTemplate().update(updateResourceStatement, meta) == 1;
 	}
 
 	@Override

@@ -1,13 +1,14 @@
 package org.webcomponents.security.vote;
 
-import java.security.Principal;
+
+import org.springframework.security.Authentication;
 
 public interface ContentRelatedRoleService {
 	
-	boolean isContentOwner(Object id, Principal principal);
+	boolean isContentOwner(Object id, Authentication authentication);
 	
-	boolean isContentEditor(Object id, Principal principal);
+	boolean isContentEditor(Object id, Authentication authentication);
 
-	boolean isContentViewer(Object id, Principal principal);
+	boolean isContentViewer(Object id, Authentication authentication);
 
 }

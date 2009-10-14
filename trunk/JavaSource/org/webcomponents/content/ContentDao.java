@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.security.Principal;
 import java.util.List;
 
+import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 
 
@@ -32,11 +33,11 @@ public interface ContentDao {
 	
 	void removeRelatedContent(String id);
 
-	boolean isOwner(String id, Principal principal);
+	boolean isOwner(String id, Authentication authentication);
 	
-	boolean isViewer(String id, Principal principal);
+	boolean isViewer(String id, Authentication authentication);
 
-	boolean isEditor(String id, Principal principal);
+	boolean isEditor(String id, Authentication authentication);
 	
 	List<GrantedAuthority> getAuthorities(String id);
 	

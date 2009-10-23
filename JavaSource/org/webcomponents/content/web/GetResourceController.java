@@ -2,7 +2,6 @@ package org.webcomponents.content.web;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.ServletContextAware;
 import org.webcomponents.content.ResourceService;
+import org.webcomponents.net.URI;
 
 public class GetResourceController implements ServletContextAware {
 

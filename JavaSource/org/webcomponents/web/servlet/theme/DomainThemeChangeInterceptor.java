@@ -6,9 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ThemeResolver;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-public class DomainThemeResolver implements ThemeResolver {
+public class DomainThemeChangeInterceptor extends HandlerInterceptorAdapter {
 	
 	public final static String ORIGINAL_DEFAULT_THEME_NAME = "theme";
 
@@ -31,20 +33,20 @@ public class DomainThemeResolver implements ThemeResolver {
 	}
 
 	@Override
-	public String resolveThemeName(HttpServletRequest request) {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+		ThemeResolver resolver = (ThemeResolver) request.getAttribute(DispatcherServlet.THEME_RESOLVER_ATTRIBUTE);
 		if(CollectionUtils.isEmpty(themes)) {
-			return getDefaultThemeName();
+			resolver.setThemeName(request, response, getDefaultThemeName());
+		} else {
+			String host = request.getServerName();
+			String theme = themes.get(host);
+			if(theme == null) {
+				resolver.setThemeName(request, response, getDefaultThemeName());
+			} else {
+				resolver.setThemeName(request, response, theme);
+			}
 		}
-		String host = request.getServerName();
-		String theme = themes.get(host);
-		if(theme == null) {
-			return getDefaultThemeName();
-		}
-		return theme;
-	}
-
-	@Override
-	public void setThemeName(HttpServletRequest arg0, HttpServletResponse arg1, String themeName) {
+		return true;
 	}
 
 	public void setThemes(Map<String, String> themes) {

@@ -1,6 +1,6 @@
 package org.webcomponents.net;
 
-public class URI {
+public class URIWrapper {
 	
 	private java.net.URI uri;
 	
@@ -37,8 +37,8 @@ public class URI {
 		return this.uri.toString();
 	}
 
-	public static URI create(String s) {
-		URI rv = new URI();
+	public static URIWrapper create(String s) {
+		URIWrapper rv = new URIWrapper();
 		rv.setValue(s);
 		return rv;
 	}

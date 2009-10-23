@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.security.annotation.Secured;
 import org.springframework.web.multipart.MultipartFile;
-import org.webcomponents.net.URI;
+import org.webcomponents.net.URIWrapper;
 
 public interface ResourceService {
 	
@@ -32,12 +32,12 @@ public interface ResourceService {
 	public void removeAllResources(String contentId) throws IOException;
 	
 	@Secured({"ROLE_ADMIN","CONTENT_OWNER","CONTENT_VIEWER"})
-	public URI getResourceAccessUri(URI resource) throws IOException;
+	public URIWrapper getResourceAccessUri(URIWrapper resource) throws IOException;
 	
 	@Secured({"ROLE_ADMIN","CONTENT_OWNER","CONTENT_VIEWER"})
-	public void exportResource(URI resource, OutputStream out) throws IOException;
+	public void exportResource(URIWrapper resource, OutputStream out) throws IOException;
 
 	@Secured({"ROLE_ADMIN","CONTENT_OWNER"})
-	public void removeResource(URI resource) throws IOException;
+	public void removeResource(URIWrapper resource) throws IOException;
 
 }

@@ -9,7 +9,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
-public class URIEditor extends PropertyEditorSupport {
+public class URIWrapperEditor extends PropertyEditorSupport {
 
 	private final ClassLoader classLoader;
 
@@ -17,7 +17,7 @@ public class URIEditor extends PropertyEditorSupport {
 	 * Create a new URIEditor, converting "classpath:" locations into
 	 * standard URIs (not trying to resolve them into physical resources).
 	 */
-	public URIEditor() {
+	public URIWrapperEditor() {
 		this.classLoader = null;
 	}
 
@@ -27,7 +27,7 @@ public class URIEditor extends PropertyEditorSupport {
 	 * @param classLoader the ClassLoader to use for resolving "classpath:" locations
 	 * (may be <code>null</code> to indicate the default ClassLoader)
 	 */
-	public URIEditor(ClassLoader classLoader) {
+	public URIWrapperEditor(ClassLoader classLoader) {
 		this.classLoader = (classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader());
 	}
 
@@ -71,13 +71,13 @@ public class URIEditor extends PropertyEditorSupport {
 	 * @return the URI instance
 	 * @throws URISyntaxException if URI conversion failed
 	 */
-	protected URI createURI(String value) throws URISyntaxException {
-		return URI.create(StringUtils.replace(value, " ", "%20"));
+	protected URIWrapper createURI(String value) throws URISyntaxException {
+		return URIWrapper.create(StringUtils.replace(value, " ", "%20"));
 	}
 
 
 	public String getAsText() {
-		URI value = (URI) getValue();
+		URIWrapper value = (URIWrapper) getValue();
 		return (value != null ? value.toString() : "");
 	}
 }

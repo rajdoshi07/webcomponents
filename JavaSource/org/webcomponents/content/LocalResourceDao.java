@@ -9,25 +9,25 @@ import java.io.OutputStream;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
-import org.webcomponents.net.URI;
+import org.webcomponents.net.URIWrapper;
 
 public class LocalResourceDao implements ResourceDao {
 	
 	private Resource root;
 
 	@Override
-	public URI getAccessUri(URI path) throws IOException {
+	public URIWrapper getAccessUri(URIWrapper path) throws IOException {
 		return path;
 	}
 
 	@Override
-	public File getFile(URI path) throws IOException {
+	public File getFile(URIWrapper path) throws IOException {
 		File r = root.getFile();
 		return new File(r, path.toString());
 	}
 
 	@Override
-	public void remove(URI path) throws IOException {
+	public void remove(URIWrapper path) throws IOException {
 		File r = root.getFile();
 		File file = new File(r, path.toString());
 		if(file.exists()) {
@@ -41,7 +41,7 @@ public class LocalResourceDao implements ResourceDao {
 	}
 
 	@Override
-	public void export(URI path, OutputStream out) throws IOException {
+	public void export(URIWrapper path, OutputStream out) throws IOException {
 		File r = root.getFile();
 		File file = new File(r, path.toString());
 		if(!file.exists()) {
@@ -58,7 +58,7 @@ public class LocalResourceDao implements ResourceDao {
 	}
 
 	@Override
-	public void put(URI path, File source) throws IOException {
+	public void put(URIWrapper path, File source) throws IOException {
 		// TODO Auto-generated method stub
 		
 	}

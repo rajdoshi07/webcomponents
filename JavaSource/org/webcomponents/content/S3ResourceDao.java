@@ -18,7 +18,7 @@ import org.jets3t.service.security.AWSCredentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
-import org.webcomponents.net.URI;
+import org.webcomponents.net.URIWrapper;
 
 public class S3ResourceDao implements ResourceDao, InitializingBean {
 	
@@ -34,7 +34,7 @@ public class S3ResourceDao implements ResourceDao, InitializingBean {
 	
 	private S3Service s3Service;
 	
-	private URI repository;
+	private URIWrapper repository;
 	
 	private String context;
 	
@@ -49,7 +49,7 @@ public class S3ResourceDao implements ResourceDao, InitializingBean {
 	}
 	
 	@Override
-	public void put(URI dest, File source) throws IOException {
+	public void put(URIWrapper dest, File source) throws IOException {
 		try {
 			S3Object obj = new S3Object(source);
 			String key = context + dest.toString();
@@ -65,18 +65,18 @@ public class S3ResourceDao implements ResourceDao, InitializingBean {
 	}
 	
 	@Required
-	public void setRepository(URI uri) {
+	public void setRepository(URIWrapper uri) {
 		this.repository = uri;
 	}
 	
-	private String getBucketName(URI uri) {
+	private String getBucketName(URIWrapper uri) {
 		String host = uri.getHost();
 		int p = host.indexOf('.');
 		return host.substring(0, p);
 	}
 
 	@Override
-	public void remove(URI path) throws IOException {
+	public void remove(URIWrapper path) throws IOException {
 		try {
 			s3Service.deleteObject(bucket, context + path.toString());
 		} catch (S3ServiceException e) {
@@ -90,12 +90,12 @@ public class S3ResourceDao implements ResourceDao, InitializingBean {
 	}
 
 	@Override
-	public URI getAccessUri(URI relativeUrl) throws IOException {
+	public URIWrapper getAccessUri(URIWrapper relativeUrl) throws IOException {
 		Calendar expiringOn = Calendar.getInstance(TIME_ZONE);
 		expiringOn.add(Calendar.MINUTE, accessTime);
 		try {
 			String rv = S3Service.createSignedGetUrl(bucket.getName(), context + relativeUrl, awsCredentials, expiringOn.getTime());
-			return URI.create(rv);
+			return URIWrapper.create(rv);
 		} catch (S3ServiceException e) {
 			logger.error("Unable to grant an access url to resource " + relativeUrl + ". " + e.getMessage());
 			throw new IOException(e);
@@ -113,12 +113,12 @@ public class S3ResourceDao implements ResourceDao, InitializingBean {
 	}
 
 	@Override
-	public File getFile(URI path) throws IOException {
+	public File getFile(URIWrapper path) throws IOException {
 		return File.createTempFile(FilenameUtils.getName(path.toString()), null);
 	}
 
 	@Override
-	public void export(URI uri, OutputStream out) throws IOException {
+	public void export(URIWrapper uri, OutputStream out) throws IOException {
 		// TODO Auto-generated method stub
 		
 	}

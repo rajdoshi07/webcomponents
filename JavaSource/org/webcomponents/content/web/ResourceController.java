@@ -19,7 +19,7 @@ import org.webcomponents.content.ContentService;
 import org.webcomponents.content.ResourceException;
 import org.webcomponents.content.ResourceMetaData;
 import org.webcomponents.content.ResourceService;
-import org.webcomponents.net.URI;
+import org.webcomponents.net.URIWrapper;
 
 @Controller
 public class ResourceController {
@@ -62,7 +62,7 @@ public class ResourceController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public void remove(@RequestParam("resource")URI resource, HttpServletResponse response) throws IOException {
+	public void remove(@RequestParam("resource")URIWrapper resource, HttpServletResponse response) throws IOException {
 		this.resourceService.removeResource(resource);
 		response.setStatus(HttpServletResponse.SC_OK);
 		// Mac bug

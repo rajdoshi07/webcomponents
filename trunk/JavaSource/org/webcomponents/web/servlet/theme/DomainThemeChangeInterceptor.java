@@ -35,17 +35,15 @@ public class DomainThemeChangeInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		ThemeResolver resolver = (ThemeResolver) request.getAttribute(DispatcherServlet.THEME_RESOLVER_ATTRIBUTE);
-		if(CollectionUtils.isEmpty(themes)) {
-			resolver.setThemeName(request, response, getDefaultThemeName());
-		} else {
+		String theme = getDefaultThemeName();
+		if(!CollectionUtils.isEmpty(themes)) {
 			String host = request.getServerName();
-			String theme = themes.get(host);
+			theme = themes.get(host);
 			if(theme == null) {
-				resolver.setThemeName(request, response, getDefaultThemeName());
-			} else {
-				resolver.setThemeName(request, response, theme);
+				theme = getDefaultThemeName();
 			}
 		}
+		resolver.setThemeName(request, response, theme);
 		return true;
 	}
 

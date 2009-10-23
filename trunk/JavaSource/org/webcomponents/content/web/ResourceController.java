@@ -2,7 +2,6 @@ package org.webcomponents.content.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +19,7 @@ import org.webcomponents.content.ContentService;
 import org.webcomponents.content.ResourceException;
 import org.webcomponents.content.ResourceMetaData;
 import org.webcomponents.content.ResourceService;
+import org.webcomponents.net.URI;
 
 @Controller
 public class ResourceController {
@@ -62,8 +62,8 @@ public class ResourceController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public void remove(@RequestParam("resource")String resource, HttpServletResponse response) throws IOException {
-		this.resourceService.removeResource(URI.create(resource));
+	public void remove(@RequestParam("resource")URI resource, HttpServletResponse response) throws IOException {
+		this.resourceService.removeResource(resource);
 		response.setStatus(HttpServletResponse.SC_OK);
 		// Mac bug
 		PrintWriter out = response.getWriter();

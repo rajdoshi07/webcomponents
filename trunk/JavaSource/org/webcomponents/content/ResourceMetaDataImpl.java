@@ -1,6 +1,6 @@
 package org.webcomponents.content;
 
-import java.net.URI;
+import org.webcomponents.net.URI;
 
 
 public class ResourceMetaDataImpl extends PersistentObject implements ResourceMetaData {

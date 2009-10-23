@@ -3,7 +3,8 @@ package org.webcomponents.content;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
+
+import org.webcomponents.net.URI;
 
 public interface ResourceDao {
 	

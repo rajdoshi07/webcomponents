@@ -2,11 +2,11 @@ package org.webcomponents.content;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 import java.util.List;
 
 import org.springframework.security.annotation.Secured;
 import org.springframework.web.multipart.MultipartFile;
+import org.webcomponents.net.URI;
 
 public interface ResourceService {
 	

@@ -1,7 +1,8 @@
 package org.webcomponents.content;
 
-import java.net.URI;
 import java.util.Date;
+
+import org.webcomponents.net.URI;
 
 public interface ResourceMetaData {
 	

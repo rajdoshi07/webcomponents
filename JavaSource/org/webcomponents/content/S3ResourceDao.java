@@ -3,7 +3,6 @@ package org.webcomponents.content;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -19,6 +18,7 @@ import org.jets3t.service.security.AWSCredentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
+import org.webcomponents.net.URI;
 
 public class S3ResourceDao implements ResourceDao, InitializingBean {
 	

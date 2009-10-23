@@ -1,6 +1,6 @@
 package org.webcomponents.content;
 
-import org.webcomponents.net.URI;
+import org.webcomponents.net.URIWrapper;
 
 
 public class PictureMetaData extends ResourceMetaDataImpl {
@@ -13,7 +13,7 @@ public class PictureMetaData extends ResourceMetaDataImpl {
 	 */
 	private static final long serialVersionUID = -1341864927923537050L;
 	private int resolution;
-	private URI hiResolutionPicture;
+	private URIWrapper hiResolutionPicture;
 	private int width;
 	private int height;
 	private String relationship;
@@ -26,11 +26,11 @@ public class PictureMetaData extends ResourceMetaDataImpl {
 		this.resolution = resolution;
 	}
 
-	public URI getHiResolutionPicture() {
+	public URIWrapper getHiResolutionPicture() {
 		return hiResolutionPicture;
 	}
 	
-	public void setHiResolutionPicture(URI uri) {
+	public void setHiResolutionPicture(URIWrapper uri) {
 		this.hiResolutionPicture = uri;
 	}
 

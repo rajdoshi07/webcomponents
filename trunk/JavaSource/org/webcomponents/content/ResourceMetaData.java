@@ -2,7 +2,7 @@ package org.webcomponents.content;
 
 import java.util.Date;
 
-import org.webcomponents.net.URI;
+import org.webcomponents.net.URIWrapper;
 
 public interface ResourceMetaData {
 	
@@ -10,7 +10,7 @@ public interface ResourceMetaData {
 	
 	public long getSize();
 	
-	public URI getUri();
+	public URIWrapper getUri();
 	
 	public String getName();
 	

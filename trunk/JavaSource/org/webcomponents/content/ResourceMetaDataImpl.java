@@ -1,6 +1,6 @@
 package org.webcomponents.content;
 
-import org.webcomponents.net.URI;
+import org.webcomponents.net.URIWrapper;
 
 
 public class ResourceMetaDataImpl extends PersistentObject implements ResourceMetaData {
@@ -14,7 +14,7 @@ public class ResourceMetaDataImpl extends PersistentObject implements ResourceMe
 	
 	private long size;
 	
-	private URI uri;
+	private URIWrapper uri;
 	
 	private int status;
 	
@@ -33,7 +33,7 @@ public class ResourceMetaDataImpl extends PersistentObject implements ResourceMe
 	}
 
 	@Override
-	public URI getUri() {
+	public URIWrapper getUri() {
 		return uri;
 	}
 
@@ -52,7 +52,7 @@ public class ResourceMetaDataImpl extends PersistentObject implements ResourceMe
 		if(id == null) {
 			setUri(null);
 		}
-		URI value = URI.create(id);
+		URIWrapper value = URIWrapper.create(id);
 		setUri(value);
 	}
 	
@@ -64,7 +64,7 @@ public class ResourceMetaDataImpl extends PersistentObject implements ResourceMe
 		this.size = size;
 	}
 
-	public void setUri(URI uri) {
+	public void setUri(URIWrapper uri) {
 		this.uri = uri;
 	}
 

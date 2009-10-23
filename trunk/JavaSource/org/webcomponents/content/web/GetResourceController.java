@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.ServletContextAware;
 import org.webcomponents.content.ResourceService;
-import org.webcomponents.net.URI;
+import org.webcomponents.net.URIWrapper;
 
 public class GetResourceController implements ServletContextAware {
 
@@ -41,8 +41,8 @@ public class GetResourceController implements ServletContextAware {
 	public void get(HttpServletRequest request, HttpServletResponse response) throws S3ServiceException, IOException {
 		String path = request.getRequestURI();
 		if(path != null) {
-			URI uri = URI.create(path.substring(offset));
-			URI url = resourceService.getResourceAccessUri(uri);
+			URIWrapper uri = URIWrapper.create(path.substring(offset));
+			URIWrapper url = resourceService.getResourceAccessUri(uri);
 			if(url.isAbsolute()) {
 				logger.debug("Redirecting request path: " + path + " to " + url.toString());
 				response.sendRedirect(url.toString());

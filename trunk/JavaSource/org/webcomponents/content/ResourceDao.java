@@ -4,18 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.webcomponents.net.URI;
+import org.webcomponents.net.URIWrapper;
 
 public interface ResourceDao {
 	
-	void put(URI path, File source) throws IOException;
+	void put(URIWrapper path, File source) throws IOException;
 
-	void remove(URI path) throws IOException;
+	void remove(URIWrapper path) throws IOException;
 
-	URI getAccessUri(URI path) throws IOException;
+	URIWrapper getAccessUri(URIWrapper path) throws IOException;
 	
-	File getFile(URI path) throws IOException;
+	File getFile(URIWrapper path) throws IOException;
 	
-	public void export(URI path, OutputStream out) throws IOException;
+	public void export(URIWrapper path, OutputStream out) throws IOException;
 	
 }

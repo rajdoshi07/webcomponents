@@ -1,6 +1,5 @@
 package org.webcomponents.mail;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.webcomponents.membership.Member;
@@ -12,11 +11,9 @@ public class TokenEmailSender extends RuntimeReceiverEmailSender {
 	
 	private String key;
 	
-	protected Map<String, Object> prepareModel(Object obj) {
-		Map<String, Object> model = new HashMap<String, Object>(2);
+	protected void populateModel(Map<String, Object> model, Object obj) {
 		model.put("object", obj);
 		model.put("code", prepareCode(obj));
-		return model;
 	}
 
 	private String prepareCode(Object obj) {

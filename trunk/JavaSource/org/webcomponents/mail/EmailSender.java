@@ -1,6 +1,5 @@
 package org.webcomponents.mail;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,6 +11,8 @@ import org.apache.log4j.Logger;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 public abstract class EmailSender {
 
@@ -32,10 +33,18 @@ public abstract class EmailSender {
 	}
 
 	public void sendEmail(Object obj) {
-		Map<String, Object> model = prepareModel(obj);
-		if(model == null) {
-			model = Collections.emptyMap();
+		Map<String, Object> model = new HashMap<String, Object>();
+		
+		RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+		String[] names = attributes.getAttributeNames(RequestAttributes.SCOPE_REQUEST);
+		for(int i = 0; names != null && i < names.length; i++) {
+			String name = names[i];
+			Object attribute = attributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST);
+			model.put(name, attribute);
 		}
+		
+		populateModel(model, obj);
+		
 		MailContentTemplate template = getTemplate(obj);
 		if(template == null) {
 			logger.warn("No template found to send object " + ObjectUtils.nullSafeToString(obj));
@@ -50,10 +59,8 @@ public abstract class EmailSender {
 		this.mailer.send(preparator);
 	}
 
-	protected Map<String, Object> prepareModel(Object obj) {
-		Map<String, Object> model = new HashMap<String, Object>(1);
+	protected void populateModel(Map<String, Object> model, Object obj) {
 		model.put("object", obj);
-		return model;
 	}
 
 	private MailContentTemplate getTemplate(Object obj) {

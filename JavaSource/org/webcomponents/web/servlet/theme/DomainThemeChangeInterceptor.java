@@ -6,9 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 public class DomainThemeChangeInterceptor extends HandlerInterceptorAdapter {
 	
@@ -34,7 +34,7 @@ public class DomainThemeChangeInterceptor extends HandlerInterceptorAdapter {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		ThemeResolver resolver = (ThemeResolver) request.getAttribute(DispatcherServlet.THEME_RESOLVER_ATTRIBUTE);
+		ThemeResolver resolver = RequestContextUtils.getThemeResolver(request);
 		String theme = getDefaultThemeName();
 		if(!CollectionUtils.isEmpty(themes)) {
 			String host = request.getServerName();

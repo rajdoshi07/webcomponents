@@ -38,7 +38,7 @@ public interface ContentService extends ContentRelatedRoleService {
 	@Secured("ROLE_ADMIN")
 	public List<Content> listVisibleContentMetadata(List<GrantedAuthority> authority);
 
-	@Secured("ROLE_ADMIN")
+//	@Secured("ROLE_ADMIN")
 	public void export(String id, Writer out) throws ContentNotFoundException, IOException;
 	
 	@Secured("ROLE_ADMIN")

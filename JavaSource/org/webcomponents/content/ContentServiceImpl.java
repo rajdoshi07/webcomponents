@@ -83,6 +83,34 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
+	public void unpublish(String id) throws ContentNotFoundException {
+		Content pub = retrieve(id);
+		if(pub == null) {
+			throw new ContentNotFoundException(id);
+		}
+		if(pub.getStatus() == Content.STATUS_UNPUBLISHED) {
+			return;
+		}
+		// Pubblicare sul negozio la pubblicazione
+		Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+		contentDao.updateStatus(id, Content.STATUS_UNPUBLISHED, principal);
+	}
+
+	@Override
+	public void setWIPStatus(String id) throws ContentNotFoundException {
+		Content pub = retrieve(id);
+		if(pub == null) {
+			throw new ContentNotFoundException(id);
+		}
+		if(pub.getStatus() == Content.STATUS_WIP) {
+			return;
+		}
+		// Pubblicare sul negozio la pubblicazione
+		Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+		contentDao.updateStatus(id, Content.STATUS_WIP, principal);
+	}
+
+	@Override
 	public void remove(String id) throws ContentNotFoundException, IllegalStateException {
 		Content content = this.retrieve(id);
 		if(content == null) {

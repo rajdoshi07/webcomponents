@@ -1,9 +1,6 @@
 package org.webcomponents.security.ui.josso;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.josso.gateway.GatewayServiceLocator;
@@ -58,14 +55,6 @@ public class JOSSOAuthenticationProcessingFilter extends AbstractProcessingFilte
 	@Override
 	public int getOrder() {
 	        return FilterChainOrder.AUTHENTICATION_PROCESSING_FILTER;
-	}
-
-	@Override
-	protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authResult) throws IOException {
-		super.onSuccessfulAuthentication(request, response, authResult);
-
-		JOSSOAuthenticationToken authentication = (JOSSOAuthenticationToken) authResult;
-		JOSSOUtils.setCookie(request, response, authentication.getJossoSessionId());
 	}
 
 	@Required

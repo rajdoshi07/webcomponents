@@ -30,7 +30,6 @@ public class JOSSOLogoutFilter extends org.springframework.security.ui.logout.Lo
 		String logoutUrl = this.gatewayLogoutUrl + JOSSOUtils.buildBackToQueryString(request, getLogoutSuccessUrl());
 		logger.debug("Redirecting to logout url '" + logoutUrl + "'");
 
-		JOSSOUtils.cancelCookie(request, response);
 		return logoutUrl;
 	}
 

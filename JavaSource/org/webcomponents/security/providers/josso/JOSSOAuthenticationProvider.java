@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.josso.gateway.GatewayServiceLocator;
 import org.josso.gateway.identity.SSORole;
+import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.exceptions.NoSuchUserException;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
 import org.josso.gateway.identity.service.SSOIdentityManagerService;
@@ -20,6 +21,7 @@ import org.springframework.security.providers.AuthenticationProvider;
 import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -36,9 +38,14 @@ public class JOSSOAuthenticationProvider implements AuthenticationProvider {
 		JOSSOAuthenticationToken auth = (JOSSOAuthenticationToken) authentication;
 		String jossoSessionId = auth.getJossoSessionId();
 		try {
-			Principal principal = im.findUserInSession(jossoSessionId);
+			SSOUser ssoUser = im.findUserInSession(jossoSessionId);
+			if (ssoUser == null) {
+				logger.debug("No SSOUser found for JOSSO Session ID " + StringUtils.quote(jossoSessionId));
+				return null;
+			}
+			Principal principal = createPrincipal(ssoUser);
 			if (principal == null) {
-				logger.debug("No principal found for JOSSO Session ID " + StringUtils.quote(jossoSessionId));
+				logger.debug("No principal created from SSOUser " + ObjectUtils.getDisplayString(ssoUser));
 				return null;
 			}
 			logger.debug("Principal found for JOSSO Session ID " + StringUtils.quote(jossoSessionId) + ": " + principal);
@@ -54,13 +61,21 @@ public class JOSSOAuthenticationProvider implements AuthenticationProvider {
 		}
 	}
 
-	private Authentication createSuccessAuthentication(Object principal, JOSSOAuthenticationToken auth, UserDetails details) {
-		JOSSOAuthenticationToken rv = new JOSSOAuthenticationToken(auth.getJossoSessionId(), details.getAuthorities());
-		rv.setDetails(details);
-		rv.setAuthenticated(true);
-		return rv;
+	@Required
+	public void setGatewayServiceLocator(GatewayServiceLocator gsl) throws Exception {
+		this.im = gsl.getSSOIdentityManager();
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean supports(Class authentication) {
+		return JOSSOAuthenticationToken.class.isAssignableFrom(authentication);
+	}
+	
+	protected Principal createPrincipal(SSOUser user) {
+		return user;
+	}
+	
 	protected UserDetails retrieveUser(String jossoSessionId, String username, JOSSOAuthenticationToken authentication) throws NoSuchUserException, SSOIdentityException {
 		SSORole[] roles = im.findRolesBySSOSessionId(jossoSessionId);
 		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
@@ -77,15 +92,12 @@ public class JOSSOAuthenticationProvider implements AuthenticationProvider {
 		User rv = new User(username, "", true, true, true, true, authorities.toArray(new GrantedAuthority[0]));
 		return rv;
 	}
-
-	@Required
-	public void setGatewayServiceLocator(GatewayServiceLocator gsl) throws Exception {
-		this.im = gsl.getSSOIdentityManager();
+	
+	private Authentication createSuccessAuthentication(Object principal, JOSSOAuthenticationToken auth, UserDetails details) {
+		JOSSOAuthenticationToken rv = new JOSSOAuthenticationToken(auth.getJossoSessionId(), details.getAuthorities());
+		rv.setDetails(details);
+		rv.setAuthenticated(true);
+		return rv;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean supports(Class authentication) {
-		return JOSSOAuthenticationToken.class.isAssignableFrom(authentication);
-	}
 }
